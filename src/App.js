@@ -1,10 +1,12 @@
 import { Route, BrowserRouter as Router, Switch, Redirect } from 'react-router-dom';
 import Home from "./components/Home/Home";
-import SignIn from "./components/Auth/SignIn/SignIn";
+import CSignIn from "./containers/Auth/CSignIn";
 import ListFamilies from './components/Families/ListFamilies/ListFamilies';
 import ListLoans from './components/Loans/ListLoans/ListLoans';
-var auth = false;
+import { useSelector } from 'react-redux';
+ var auth;
 function App() {
+   auth = useSelector( state => state.auth?.auth?.token);
 
   return (
     <div className="App">
@@ -14,7 +16,10 @@ function App() {
             if (auth) { return <Redirect to={{ pathname: '/families', state: { from: '/' } }} /> }
             return <Home {...props} />
           }} />
-          <Route path='/login' render={props => <SignIn {...props} />} />
+          <Route path='/login' render={props => {
+           if (auth) { return <Redirect to={{ pathname: '/families', state: { from: '/' } }} /> }
+            return <CSignIn {...props} />
+            }} />
           <PrivateRoute path='/families'>
             <ListFamilies />
           </PrivateRoute>

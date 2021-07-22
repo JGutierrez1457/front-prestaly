@@ -3,17 +3,20 @@ import clsx from 'clsx';
 import { IconButton, Drawer, Divider, List, ListItem, ListItemIcon, 
     ListItemText, Typography, Avatar, CssBaseline } from '@material-ui/core'
 import useStyles from './styles';
-import { Link,  useRouteMatch } from 'react-router-dom';
+import { Link,  useHistory } from 'react-router-dom';
 import {
     ChevronRight as ChevronRightIcon, ChevronLeft as ChevronLeftIcon, People as PeopleIcon, LocalAtm as LocalAtmIcon,
     ExitToApp as ExitToAppIcon
 } from '@material-ui/icons';
+import { LOGOUT } from '../../constants/actionsTypes'
+import { useDispatch } from 'react-redux';
 
 
 export default function MiDrawer({children}) {
     const classes = useStyles();
+    const dispatch = useDispatch();
     const [open, setOpen] = React.useState(false);
-
+    const history = useHistory();
     const handleDrawerOpen = () => {
         setOpen(true);
     };
@@ -21,6 +24,14 @@ export default function MiDrawer({children}) {
     const handleDrawerClose = () => {
         setOpen(false);
     };
+    const logOut = ()=>{
+        dispatch(
+            {
+                type : LOGOUT
+            }
+        )
+        history.push('/')
+    }
     return (
         <div className={classes.root}>
             <CssBaseline />
@@ -87,7 +98,7 @@ export default function MiDrawer({children}) {
                 </List>
                 <Divider />
                 <List>
-                    <ListItem button key='logout' component={Link} to={`/login`}>
+                    <ListItem button key='logout' onClick={logOut}>
                         <ListItemIcon>
                             <ExitToAppIcon />
                         </ListItemIcon>

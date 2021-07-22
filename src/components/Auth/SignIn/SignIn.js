@@ -1,17 +1,45 @@
-import React from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
+import { Button, Paper, TextField, Typography } from '@material-ui/core';
+import React, { useState} from 'react'
+import { useHistory } from 'react-router-dom'
+import useStyles from './styles'
 
-function SignIn() {
-    const location = useLocation();
+function SignIn({handleLogin}) {
     const history = useHistory();
-    const { from  } = location.state || { from : { pathname : "/"}}
-    const login = ()=>{
-        history.replace(from);
+    const classes = useStyles();
+    const [ userData, setUserData ] = useState({username : '', password : ''});
+    const onLogin = ()=>{
+        handleLogin(userData)
+        .then(m =>{if(m.severity === 'success'){history.push('/families')}})
+    }
+    const handleChange = (e)=>{
+        setUserData({...userData, [e.target.name] : e.target.value })
     }
     return (
-        <div>
-            Login
-            <button onClick={login}>Log In</button>
+        <div className={classes.containerPaper}>
+        <Paper className={classes.paper}>
+            <Typography variant='h6' align='center'>Login</Typography>
+            <TextField 
+                variant='outlined' 
+                name='username' 
+                autoFocus 
+                label='Ingrese su usuario'
+                type='text'
+                required 
+                fullWidth
+                onChange={handleChange}
+                />
+            <TextField 
+                variant='outlined' 
+                name='password' 
+                autoFocus 
+                label='Ingrese su contraseña'
+                type='password'
+                required 
+                fullWidth
+                onChange={handleChange}
+                />
+            <Button color='primary' variant='contained' onClick={onLogin}>Ingresar</Button>
+        </Paper>
         </div>
     )
 }
