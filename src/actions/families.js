@@ -1,4 +1,4 @@
-import { GET_MY_FAMILIES } from '../constants/actionsTypes'
+import { GET_MY_FAMILIES, ADD_MEMBER } from '../constants/actionsTypes'
 import * as API from '../api'
 export const getMembersFamily = ()=>async(dispatch)=>{
     try {
@@ -15,5 +15,19 @@ export const getMembersFamily = ()=>async(dispatch)=>{
                 payload : []
             })
         }
+    }
+}
+export const addMemberFamily = (idfamily, username)=>async(dispatch)=>{
+    try {
+        const { data } = await API.addMember(idfamily, username);
+        const message = data.message;
+        delete data.message;
+        dispatch({
+            type : ADD_MEMBER,
+            payload : data
+        })
+         return message;
+    } catch (error) {
+        return error.response.data?.message;
     }
 }

@@ -3,15 +3,17 @@ import React, { useState} from 'react'
 import { useHistory } from 'react-router-dom'
 import useStyles from './styles'
 
-function SignIn({handleLogin, handleGetFamilies}) {
+function SignIn({handleLogin}) {
     const history = useHistory();
     const classes = useStyles();
     const [ userData, setUserData ] = useState({username : '', password : ''});
     const onLogin =async ()=>{
-        const resLogin = await handleLogin(userData)
-        const resFamilies = await handleGetFamilies();
-        console.log(resFamilies)
-        if(resLogin.severity === 'success'){history.push('/families')}
+        try {
+            const resLogin = await handleLogin(userData)
+            if(resLogin.severity === 'success'){history.push('/families')}
+        } catch (error) {
+            console.error(error)
+        }
     }
     const handleChange = (e)=>{
         setUserData({...userData, [e.target.name] : e.target.value })

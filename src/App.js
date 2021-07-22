@@ -1,9 +1,9 @@
 import { Route, BrowserRouter as Router, Switch, Redirect } from 'react-router-dom';
 import Home from "./components/Home/Home";
 import CSignIn from "./containers/Auth/CSignIn";
-import ListFamilies from './components/Families/ListFamilies/ListFamilies';
 import ListLoans from './components/Loans/ListLoans/ListLoans';
 import { useSelector } from 'react-redux';
+import CListFamilies from './containers/Families/CListFamilies';
  var auth;
 function App() {
    auth = useSelector( state => state.auth?.auth?.token);
@@ -21,7 +21,7 @@ function App() {
             return <CSignIn {...props} />
             }} />
           <PrivateRoute path='/families'>
-            <ListFamilies />
+            <CListFamilies />
           </PrivateRoute>
           <PrivateRoute path='/loans'>
             <ListLoans />
