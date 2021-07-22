@@ -9,4 +9,6 @@ API.interceptors.request.use(req=>{
     return req;
 })
 
+export const getMembers = () =>API.get(`/api/families`);
+
 export const signIn = (data)=>API.post('/api/auth/signin',data);

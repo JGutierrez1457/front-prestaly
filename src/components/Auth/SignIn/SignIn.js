@@ -3,13 +3,15 @@ import React, { useState} from 'react'
 import { useHistory } from 'react-router-dom'
 import useStyles from './styles'
 
-function SignIn({handleLogin}) {
+function SignIn({handleLogin, handleGetFamilies}) {
     const history = useHistory();
     const classes = useStyles();
     const [ userData, setUserData ] = useState({username : '', password : ''});
-    const onLogin = ()=>{
-        handleLogin(userData)
-        .then(m =>{if(m.severity === 'success'){history.push('/families')}})
+    const onLogin =async ()=>{
+        const resLogin = await handleLogin(userData)
+        const resFamilies = await handleGetFamilies();
+        console.log(resFamilies)
+        if(resLogin.severity === 'success'){history.push('/families')}
     }
     const handleChange = (e)=>{
         setUserData({...userData, [e.target.name] : e.target.value })
@@ -30,8 +32,7 @@ function SignIn({handleLogin}) {
                 />
             <TextField 
                 variant='outlined' 
-                name='password' 
-                autoFocus 
+                name='password'  
                 label='Ingrese su contraseña'
                 type='password'
                 required 
