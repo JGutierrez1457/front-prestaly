@@ -1,5 +1,6 @@
 export const GET_MY_FAMILIES = 'GET_MY_FAMILIES';
-export const ADD_MEMBER = 'ADD_MEMBER';
+export const EDIT_MEMBERS = 'EDIT_MEMBERS';
+export const EDIT_ADMINS = 'EDIT_ADMINS';
 
 export const GET_MY_LOANS = 'GET_MY_LOANS';
 

@@ -8,19 +8,27 @@ import {
     ChevronRight as ChevronRightIcon, ChevronLeft as ChevronLeftIcon, People as PeopleIcon, LocalAtm as LocalAtmIcon,
     ExitToApp as ExitToAppIcon
 } from '@material-ui/icons';
-import { LOGOUT } from '../../constants/actionsTypes'
-import { useDispatch } from 'react-redux';
+import { LOGOUT, GET_MY_FAMILIES } from '../../constants/actionsTypes';
+import { decode } from 'jsonwebtoken'
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
 
 
 export default function MiDrawer({children}) {
     const classes = useStyles();
+    const token = useSelector(state => state.auth?.auth?.token);
     const dispatch = useDispatch();
     const [open, setOpen] = React.useState(false);
     const history = useHistory();
     const handleDrawerOpen = () => {
         setOpen(true);
     };
-
+    useEffect(()=>{
+        if(token){
+            const decodeToken = decode(token);
+            if(decodeToken.exp * 1000 < new Date().getTime())logOut();
+        }
+    })
     const handleDrawerClose = () => {
         setOpen(false);
     };
@@ -30,6 +38,10 @@ export default function MiDrawer({children}) {
                 type : LOGOUT
             }
         )
+        dispatch({
+            type : GET_MY_FAMILIES,
+            payload : []
+        })
         history.push('/')
     }
     return (

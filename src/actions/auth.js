@@ -7,7 +7,7 @@ export const signin = (dataUser)=>async(dispatch)=>{
         delete data.message;
         dispatch({
             type : AUTH,
-            data
+            payload : data
         })
         return message;
     } catch (error) {

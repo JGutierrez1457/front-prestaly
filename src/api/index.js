@@ -11,5 +11,10 @@ API.interceptors.request.use(req=>{
 
 export const getMembers = () =>API.get(`/api/families`);
 export const addMember = (idfamily,username)=>API.patch(`/api/families/${idfamily}/members/${username}/add`)
+export const removeMember = (idfamily,username)=>API.patch(`/api/families/${idfamily}/members/${username}/delete`)
+export const addAdmin = (idfamily,username)=>API.patch(`/api/families/${idfamily}/admins/${username}/add`)
+export const removeAdmin = (idfamily,username)=>API.patch(`/api/families/${idfamily}/admins/${username}/delete`)
+
+
 
 export const signIn = (data)=>API.post('/api/auth/signin',data);
