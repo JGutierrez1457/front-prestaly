@@ -9,7 +9,6 @@ const mapStateToProps = (state, ownProps)=>{
         family : state.families.find(family => family._id === ownProps.idfamily),
         index : ownProps.index,
         valueTab : ownProps.valueTab,
-        setValueTab : ownProps.setValueTab,
     }
 }
 const mapDispatchToProps = (dispatch)=>{

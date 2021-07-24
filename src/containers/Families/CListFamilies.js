@@ -9,7 +9,7 @@ const mapStateToProps = (state, ownProps)=>{
 }
 const mapDispatchToProps = (dispatch)=>{
     return {
-        handleGetFamilies : ()=>dispatch(getMembersFamily()),
+        handleGetFamilies : (cancel)=>dispatch(getMembersFamily(cancel)),
         handleAddMember : (idfamily, username)=>dispatch(addMemberFamily(idfamily, username))
     }
 }

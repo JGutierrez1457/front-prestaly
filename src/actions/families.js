@@ -1,8 +1,8 @@
-import { GET_MY_FAMILIES, EDIT_MEMBERS, EDIT_ADMINS} from '../constants/actionsTypes'
+import { GET_MY_FAMILIES, EDIT_MEMBERS, EDIT_ADMINS, EDIT_CREATOR} from '../constants/actionsTypes'
 import * as API from '../api'
-export const getMembersFamily = ()=>async(dispatch)=>{
+export const getMembersFamily = (cancel)=>async(dispatch)=>{
     try {
-        const { data } = await API.getMembers();
+        const { data } = await API.getMembers(cancel);
         dispatch({
             type : GET_MY_FAMILIES,
             payload : data
@@ -28,14 +28,13 @@ export const addMemberFamily = (idfamily, username)=>async(dispatch)=>{
         })
          return message;
     } catch (error) {
-        return error.response.data?.message;
+        throw TypeError(error.response.data.message);
     }
 }
 export const removeMemberFamily = (idfamily, username)=>async(dispatch)=>{
     try {
         const { data } = await API.removeMember(idfamily, username);
         const datafamilies= await API.getMembers();
-        console.log(datafamilies)
 
         const message = data.message;
         delete data.message;
@@ -47,9 +46,14 @@ export const removeMemberFamily = (idfamily, username)=>async(dispatch)=>{
             type : GET_MY_FAMILIES,
             payload : datafamilies.data
         })
+        if(data?.creator){
+            dispatch({
+                type : EDIT_CREATOR,
+                payload : data
+            })
+        }
          return message;
     } catch (error) {
-        console.log(error)
 
         return error.response.data?.message;
     }
@@ -77,6 +81,12 @@ export const removeAdminFamily = (idfamily, username)=>async(dispatch)=>{
             type : EDIT_ADMINS,
             payload : data
         })
+        if(data?.creator){
+            dispatch({
+                type : EDIT_CREATOR,
+                payload : data
+            })
+        }
          return message;
     } catch (error) {
         return error.response.data?.message;

@@ -4,28 +4,12 @@ export default makeStyles((theme)=>({
         flexGrow: 1,
         backgroundColor : theme.palette.background.paper,
         display : 'flex',
-        height : 'auto'
+        height : 'auto',
+        [theme.breakpoints.down('xs')]:{
+            flexDirection : 'column'
+        }
     },
     tabs : {
         borderRadius:  `1px solid ${theme.palette.divider}`
-    },
-    list :{
-        display : 'flex',
-        flexDirection : 'row',
-        '& .MuiListSubheader-root':{
-            whiteSpace : 'nowrap'
-        } ,
-        '& .MuiButton-root':{
-            margin : theme.spacing(0,3)
-        }
-    },
-    listItem :{
-        display :'flex',
-        flexDirection : 'column',
-        alignContent :'center',
-        maxWidth : theme.spacing(10) ,
-        '& .MuiListItemIcon-root':{
-            justifyContent : 'center'
-        }
     }
 }))
