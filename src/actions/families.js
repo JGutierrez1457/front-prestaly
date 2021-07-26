@@ -28,7 +28,9 @@ export const addMemberFamily = (idfamily, username)=>async(dispatch)=>{
         })
          return message;
     } catch (error) {
-        throw TypeError(error.response.data.message);
+        let err = new Error(error.response.data);
+        err.status = error.response.status;
+        throw err;
     }
 }
 export const removeMemberFamily = (idfamily, username)=>async(dispatch)=>{
@@ -54,8 +56,9 @@ export const removeMemberFamily = (idfamily, username)=>async(dispatch)=>{
         }
          return message;
     } catch (error) {
-
-        return error.response.data?.message;
+        let err = new Error(error.response.data);
+        err.status = error.response.status;
+        throw err;
     }
 }
 export const addAdminFamily = (idfamily, username)=>async(dispatch)=>{
@@ -69,7 +72,9 @@ export const addAdminFamily = (idfamily, username)=>async(dispatch)=>{
         })
          return message;
     } catch (error) {
-        return error.response.data?.message;
+        let err = new Error(error.response.data);
+        err.status = error.response.status;
+        throw err;
     }
 }
 export const removeAdminFamily = (idfamily, username)=>async(dispatch)=>{
@@ -89,6 +94,8 @@ export const removeAdminFamily = (idfamily, username)=>async(dispatch)=>{
         }
          return message;
     } catch (error) {
-        return error.response.data?.message;
+        let err = new Error(error.response.data);
+        err.status = error.response.status;
+        throw err;
     }
 }

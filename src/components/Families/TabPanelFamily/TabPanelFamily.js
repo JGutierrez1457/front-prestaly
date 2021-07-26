@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from 'react'
 import { List, ListItem, ListItemIcon, ListItemText, TextField, Button, Backdrop, CircularProgress, Typography, useTheme, useMediaQuery } from '@material-ui/core';
 import { Delete as DeleteIcon, Person as PersonIcon } from '@material-ui/icons';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { useSnackbar } from 'notistack'
 import useStyles from './styles'
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
 function TabPanelFamily({ families, family, index, handleAddMember, handleRemoveMember, handleAddAdmin, handleRemoveAdmin, valueTab }) {
-   
+
     const classes = useStyles();
     const history = useHistory();
     const user = useSelector(state => state.auth.auth.result.username)
     const originalAdmins = Array.from(family.admins.map(admin => admin.username))
     const originalMembers = Array.from(family.members.map(member => member.username))
     const creator = family.creator.username;
+
+    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
     const [loading, setLoading] = useState(false);
     const [changed, setChanged] = useState(false)
@@ -33,21 +36,31 @@ function TabPanelFamily({ families, family, index, handleAddMember, handleRemove
         }
 
     }, [admins, members, trashMembers, originalAdmins, originalMembers])
-    useEffect(()=>{
+    useEffect(() => {
         setAdmins(family.admins.map(admin => admin.username));
         setMembers(family.members.map(member => member.username))
-    }, [ family, loading])
-    const onClickAddMember = async () => {
+    }, [family, loading])
+    const handleNotifyVariant = (variant, message) => {
+        enqueueSnackbar(message, { variant })
+    }
+    const onClickAddMember = async (e) => {
+        e.preventDefault();
         try {
             setLoading(true);
-            const resAddMember = await handleAddMember(families[valueTab]._id, newMember);
-            setNewMember('')
+            const text = await handleAddMember(families[valueTab]._id, newMember);
             setMembers([...members, newMember])
-            console.log(resAddMember)
+            handleNotifyVariant('success', text);
         } catch (error) {
-            console.log(error.message)
+            if (error.status === 400) {
+                handleNotifyVariant('warning', error.message);
+            }
+            if (error.status === 404) {
+                handleNotifyVariant('error', error.message);
+            }
+        } finally {
+            setNewMember('')
+            setLoading(false);
         }
-        setLoading(false);
     }
     const handleChange = (e) => {
         setNewMember(e.target.value)
@@ -67,24 +80,47 @@ function TabPanelFamily({ families, family, index, handleAddMember, handleRemove
         const removeMembers = originalMembers.filter(x => !members.includes(x));
         const removeAdmins = originalAdmins.filter(x => !admins.includes(x));
         const addAdmins = admins.filter(x => !originalAdmins.includes(x));
-        var resRemoveAdmins = []
-        var resRemoveMembers = []
-        var resAddAdmins = []
         for (let removeAdmin of removeAdmins) {
-            resRemoveAdmins.push(await handleRemoveAdmin(families[valueTab]._id, removeAdmin));
+            try {
+                const text = await handleRemoveAdmin(families[valueTab]._id, removeAdmin);
+                handleNotifyVariant('success', text)
+            } catch (error) {
+                if (error.status === 400) {
+                    handleNotifyVariant('warning', error.message);
+                }
+                if (error.status === 404) {
+                    handleNotifyVariant('error', error.message);
+                }
+            }
         }
+
         for (let removeMember of removeMembers) {
-            resRemoveMembers.push(await handleRemoveMember(families[valueTab]._id, removeMember));
+            try {
+                const text = await handleRemoveMember(families[valueTab]._id, removeMember);
+                handleNotifyVariant('success', text)
+            } catch (error) {
+                if (error.status === 400) {
+                    handleNotifyVariant('warning', error.message);
+                }
+                if (error.status === 404) {
+                    handleNotifyVariant('error', error.message);
+                }
+            }
         }
+
         for (let addAdmin of addAdmins) {
-            resAddAdmins.push(await handleAddAdmin(families[valueTab]._id, addAdmin));
+            try {
+                const text = await handleAddAdmin(families[valueTab]._id, addAdmin)
+                handleNotifyVariant('success', text)
+            } catch (error) {
+                if (error.status === 400) {
+                    handleNotifyVariant('warning', error.message);
+                }
+                if (error.status === 404) {
+                    handleNotifyVariant('error', error.message);
+                }
+            }
         }
-        /*  const resRemoveAdmins = await Promise.all(promiseRemoveAdmins);
-         const resRemoveMembers = await Promise.all(promiseRemoveMembers);
-         const resAddAdmins = await Promise.all(promiseAddAdmins); */
-        console.log(resRemoveAdmins)
-        console.log(resRemoveMembers)
-        console.log(resAddAdmins)
         if (removeMembers.some(res => res === user)) {
             history.push('/');
             return;
@@ -92,9 +128,9 @@ function TabPanelFamily({ families, family, index, handleAddMember, handleRemove
         setTrashMembers([]);
         setShowDroppTrash(false);
         setChanged(false);
-       /*  setAdmins(admins);
-        setMembers(members) */
         setLoading(false);
+
+
     }
     const handleOnDragEnd = (result) => {
         var copyAdmins = admins;
@@ -182,7 +218,7 @@ function TabPanelFamily({ families, family, index, handleAddMember, handleRemove
             <Backdrop open={loading} className={classes.backdrop}>
                 <CircularProgress color='inherit' />
             </Backdrop>
-            <TabPanel value={valueTab} key={index} index={index}className={classes.root}>
+            <TabPanel value={valueTab} key={index} index={index} className={classes.root}>
                 <Typography variant='body2' style={{ fontStyle: 'italic' }} align='center' color='textSecondary'>Creador {creator}</Typography>
                 <DragDropContext onBeforeCapture={handleOnBeforeCapture} onDragEnd={handleOnDragEnd}>
                     <div className={classes.containerList}>
@@ -258,46 +294,46 @@ function TabPanelFamily({ families, family, index, handleAddMember, handleRemove
                             )}
                         </Droppable>
                     </div>
-                    {showDroppTrash && 
-                    <div  className={classes.containerListTrash}>
-                        <DeleteIcon style={{ fill: '#f44336' }} />
-                        <Droppable droppableId='trash' direction='horizontal'>
-                        {(provided, snapshot) => (
-                            <List
-                                className={classes.listTrash}
-                                innerRef={provided.innerRef}
-                                {...provided.droppableProps}
-                            >
-                                {
-                                    trashMembers.map((member, index) => {
-                                        return <Draggable
-                                            key={member}
-                                            draggableId={'trash ' + member}
-                                            index={index}
-                                        >
-                                            {(provided) => (
-                                                <ListItem className={classes.listItem}
-                                                    innerRef={provided.innerRef}
-                                                    {...provided.dragHandleProps}
-                                                    {...provided.draggableProps}>
-                                                    <ListItemIcon>
-                                                        <PersonIcon style={{ fill: user === member ? '#3f51b5' : '' }} />
-                                                    </ListItemIcon>
-                                                    <ListItemText primary={member} />
-                                                </ListItem>)}
-                                        </Draggable>
-                                    })
-                                }
-                                {provided.placeholder}
-                            </List>
+                    {showDroppTrash &&
+                        <div className={classes.containerListTrash}>
+                            <DeleteIcon style={{ fill: '#f44336' }} />
+                            <Droppable droppableId='trash' direction='horizontal'>
+                                {(provided, snapshot) => (
+                                    <List
+                                        className={classes.listTrash}
+                                        innerRef={provided.innerRef}
+                                        {...provided.droppableProps}
+                                    >
+                                        {
+                                            trashMembers.map((member, index) => {
+                                                return <Draggable
+                                                    key={member}
+                                                    draggableId={'trash ' + member}
+                                                    index={index}
+                                                >
+                                                    {(provided) => (
+                                                        <ListItem className={classes.listItem}
+                                                            innerRef={provided.innerRef}
+                                                            {...provided.dragHandleProps}
+                                                            {...provided.draggableProps}>
+                                                            <ListItemIcon>
+                                                                <PersonIcon style={{ fill: user === member ? '#3f51b5' : '' }} />
+                                                            </ListItemIcon>
+                                                            <ListItemText primary={member} />
+                                                        </ListItem>)}
+                                                </Draggable>
+                                            })
+                                        }
+                                        {provided.placeholder}
+                                    </List>
 
-                        )}
-                    </Droppable>
-                    </div>
-                    
+                                )}
+                            </Droppable>
+                        </div>
+
                     }
                     {changed && <List>
-                        <ListItem  className={classes.listButtons}>
+                        <ListItem className={classes.listButtons}>
                             <Button variant='contained' color='primary' onClick={onClickChange}>Aceptar</Button>
                             <Button variant='contained' color='secondary' onClick={removeChanges}>Cancelar</Button>
                         </ListItem>
@@ -306,9 +342,11 @@ function TabPanelFamily({ families, family, index, handleAddMember, handleRemove
                     <div className={classes.containerList}>
                         <Typography color='textSecondary'>Agregar miembro</Typography>
                         <List>
-                            <ListItem className={classes.listButton}>
-                                <TextField value={newMember} onChange={handleChange} disabled={changed} variant='outlined' label='Ingrese usuario' />
-                                <Button variant='contained' color='primary' disabled={changed} onClick={onClickAddMember}>Agregar</Button>
+                            <ListItem>
+                                <form className={classes.listButton} onSubmit={onClickAddMember} >
+                                    <TextField value={newMember} required onChange={handleChange} disabled={changed} variant='outlined' label='Ingrese usuario' />
+                                    <Button variant='contained' color='primary' disabled={changed} type='submit'>Agregar</Button>
+                                </form>
                             </ListItem>
 
                         </List>
@@ -316,7 +354,7 @@ function TabPanelFamily({ families, family, index, handleAddMember, handleRemove
                 </DragDropContext>
 
             </TabPanel>
-            </>
+        </>
     )
 }
 function TabPanel(props) {
@@ -328,8 +366,8 @@ function TabPanel(props) {
         <div
             role="tabpanel"
             hidden={value !== index}
-            id={`${xs?'vertical':'scrollable-auto'}-tabpanel-${index}`}
-            aria-labelledby={`${xs?'vertical':'scrollable-auto'}-tab-${index}`}
+            id={`${xs ? 'vertical' : 'scrollable-auto'}-tabpanel-${index}`}
+            aria-labelledby={`${xs ? 'vertical' : 'scrollable-auto'}-tab-${index}`}
             {...other}
         >
             {value === index && (
