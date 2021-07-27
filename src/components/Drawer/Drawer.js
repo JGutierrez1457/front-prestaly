@@ -16,7 +16,7 @@ import { useEffect } from 'react';
 
 export default function MiDrawer({children}) {
     const classes = useStyles();
-    const token = useSelector(state => state.auth?.auth?.token);
+    const token = useSelector(state => state.auth?.token);
     const dispatch = useDispatch();
     const [open, setOpen] = React.useState(false);
     const history = useHistory();

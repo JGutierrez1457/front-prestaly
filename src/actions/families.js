@@ -1,4 +1,4 @@
-import { GET_MEMBERS_BY_FAMILY, EDIT_MEMBERS, EDIT_ADMINS, EDIT_CREATOR} from '../constants/actionsTypes'
+import { GET_MEMBERS_BY_FAMILY, EDIT_MEMBERS, EDIT_ADMINS, EDIT_CREATOR, GET_BALANCES_BY_FAMILY, GET_NO_BALANCEDS_BY_FAMILY} from '../constants/actionsTypes'
 import * as API from '../api'
 export const getMembersFamily = (cancel, idfamily)=>async(dispatch)=>{
     try {
@@ -12,6 +12,40 @@ export const getMembersFamily = (cancel, idfamily)=>async(dispatch)=>{
         if(error.response.status === 401 ){
             dispatch({
                 type : GET_MEMBERS_BY_FAMILY,
+                payload : []
+            })
+        }
+    }
+}
+export const getBalancesFamily = (cancel, idfamily)=>async(dispatch)=>{
+    try {
+        const { data } = await API.getBalances(cancel, idfamily);
+        dispatch({
+            type : GET_BALANCES_BY_FAMILY,
+            payload : data
+        })
+        return 'success'
+    } catch (error) {
+        if(error.response.status === 401 ){
+            dispatch({
+                type : GET_BALANCES_BY_FAMILY,
+                payload : []
+            })
+        }
+    }
+}
+export const getNoBalancedsFamily = (cancel, idfamily)=>async(dispatch)=>{
+    try {
+        const { data } = await API.getNoBalanceds(cancel, idfamily);
+        dispatch({
+            type : GET_NO_BALANCEDS_BY_FAMILY,
+            payload : data
+        })
+        return 'success'
+    } catch (error) {
+        if(error.response.status === 401 ){
+            dispatch({
+                type : GET_NO_BALANCEDS_BY_FAMILY,
                 payload : []
             })
         }

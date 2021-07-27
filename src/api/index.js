@@ -10,6 +10,8 @@ API.interceptors.request.use(req=>{
 })
 
 export const getMembers = (cancel, idfamily) =>API.get(`/api/families/${idfamily}/members`,{ cancelToken : cancel});
+export const getBalances = (cancel, idfamily) =>API.get(`/api/balances/families/${idfamily}`,{ cancelToken : cancel});
+export const getNoBalanceds = (cancel, idfamily) =>API.get(`/api/loans/no/balanced/families/${idfamily}`,{ cancelToken : cancel});
 
 export const addMember = (idfamily,username)=>API.patch(`/api/families/${idfamily}/members/${username}/add`)
 export const removeMember = (idfamily,username)=>API.patch(`/api/families/${idfamily}/members/${username}/delete`)

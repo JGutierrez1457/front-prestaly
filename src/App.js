@@ -4,7 +4,7 @@ import CSignIn from "./containers/Auth/CSignIn";
 import { useSelector } from 'react-redux';
 import ListFamilies from './components/Families/ListFamilies/ListFamilies';
 import CTabPanelMembers from './containers/Families/CTabPanelMembers';
-import Board from './components/Board/Board';
+import CTabPanelBoard from './containers/Families/CTabPanelBoard';
  var auth;
  var families;
 function App() {
@@ -28,7 +28,9 @@ function App() {
             </ListFamilies>
           </PrivateRoute>
           <PrivateRoute path='/board'>
-            <Board />
+            <ListFamilies families={families}>
+              <CTabPanelBoard />
+            </ListFamilies>
           </PrivateRoute>
         </Switch>
       </Router>
