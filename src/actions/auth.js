@@ -1,13 +1,16 @@
-import { AUTH } from '../constants/actionsTypes';
+import { AUTH, GET_MY_FAMILIES } from '../constants/actionsTypes';
 import * as API from '../api';
 export const signin = (dataUser)=>async(dispatch)=>{
     try {
         const { data } = await API.signIn(dataUser);
-        const message = data.message;
-        delete data.message;
+        const { user, families, token, message } = data;
+        dispatch({
+            type : GET_MY_FAMILIES,
+            payload : families
+        })
         dispatch({
             type : AUTH,
-            payload : data
+            payload : { user, token, families }
         })
         return message;
     } catch (error) {

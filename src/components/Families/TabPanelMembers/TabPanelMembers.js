@@ -1,30 +1,49 @@
 import React, { useState, useEffect } from 'react'
-import { List, ListItem, ListItemIcon, ListItemText, TextField, Button, Backdrop, CircularProgress, Typography, useTheme, useMediaQuery } from '@material-ui/core';
+import { List, ListItem, ListItemIcon, ListItemText, TextField, Button, Backdrop, 
+    CircularProgress, Typography, useTheme, useMediaQuery } from '@material-ui/core';
 import { Delete as DeleteIcon, Person as PersonIcon } from '@material-ui/icons';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { useSnackbar } from 'notistack'
 import useStyles from './styles'
 import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
+import axios from 'axios'
 
-function TabPanelFamily({ families, family, index, handleAddMember, handleRemoveMember, handleAddAdmin, handleRemoveAdmin, valueTab }) {
+function TabPanelMembers({ families, family, index,handleGetMembersFamily, handleAddMember, handleRemoveMember, handleAddAdmin, handleRemoveAdmin, valueTab }) {
 
     const classes = useStyles();
     const history = useHistory();
-    const user = useSelector(state => state.auth.auth.result.username)
-    const originalAdmins = Array.from(family.admins.map(admin => admin.username))
-    const originalMembers = Array.from(family.members.map(member => member.username))
-    const creator = family.creator.username;
+    const user = useSelector(state => state.auth.user.username);
+   
+    const originalAdmins = Array.from(family.admins?.map(admin => admin.username) || [])
+    const originalMembers = Array.from(family.members?.map(member => member.username) || [])
+    const creator = family.creator?.username;
+    const idFamily = family._id;
 
-    const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+    const { enqueueSnackbar } = useSnackbar();
 
-    const [loading, setLoading] = useState(false);
+    const [loadingMembers, setLoadingMembers] = useState(false);
+    const [loadingBack, setLoadingBack] = useState(false);
     const [changed, setChanged] = useState(false)
-    const [admins, setAdmins] = useState(family.admins.map(admin => admin.username));
-    const [members, setMembers] = useState(family.members.map(member => member.username));
+    const [admins, setAdmins] = useState(family.admins?.map(admin => admin.username) || []);
+    const [members, setMembers] = useState(family.members?.map(member => member.username) || []);
     const [trashMembers, setTrashMembers] = useState([]);
     const [newMember, setNewMember] = useState('');
     const [showDroppTrash, setShowDroppTrash] = useState(false);
+    useEffect(() => {
+        let cancel;
+        const getMembers = async ()=>{
+            try {
+                setLoadingMembers(true);
+                await handleGetMembersFamily(new axios.CancelToken( c => cancel = c),idFamily )
+                setLoadingMembers(false);
+            } catch (error) {
+                if(axios.isCancel(error))return;
+            }
+        }
+        getMembers();
+        return ()=>cancel();
+    }, [handleGetMembersFamily, idFamily])
     useEffect(() => {
         if (!equalIgnoreOrder(admins, originalAdmins) ||
             !equalIgnoreOrder(members, originalMembers) ||
@@ -35,18 +54,18 @@ function TabPanelFamily({ families, family, index, handleAddMember, handleRemove
             setChanged(false)
         }
 
-    }, [admins, members, trashMembers, originalAdmins, originalMembers])
+    }, [admins, members, trashMembers, originalAdmins, originalMembers, family])
     useEffect(() => {
-        setAdmins(family.admins.map(admin => admin.username));
-        setMembers(family.members.map(member => member.username))
-    }, [family, loading])
+        setAdmins(family.admins?.map(admin => admin.username) || []);
+        setMembers(family.members?.map(member => member.username) || [])
+    }, [family, loadingMembers])
     const handleNotifyVariant = (variant, message) => {
         enqueueSnackbar(message, { variant })
     }
     const onClickAddMember = async (e) => {
         e.preventDefault();
         try {
-            setLoading(true);
+            setLoadingBack(true);
             const text = await handleAddMember(families[valueTab]._id, newMember);
             setMembers([...members, newMember])
             handleNotifyVariant('success', text);
@@ -59,7 +78,7 @@ function TabPanelFamily({ families, family, index, handleAddMember, handleRemove
             }
         } finally {
             setNewMember('')
-            setLoading(false);
+            setLoadingBack(false);
         }
     }
     const handleChange = (e) => {
@@ -76,7 +95,7 @@ function TabPanelFamily({ families, family, index, handleAddMember, handleRemove
         setShowDroppTrash(false);
     }
     const onClickChange = async () => {
-        setLoading(true);
+        setLoadingBack(true);
         const removeMembers = originalMembers.filter(x => !members.includes(x));
         const removeAdmins = originalAdmins.filter(x => !admins.includes(x));
         const addAdmins = admins.filter(x => !originalAdmins.includes(x));
@@ -128,7 +147,7 @@ function TabPanelFamily({ families, family, index, handleAddMember, handleRemove
         setTrashMembers([]);
         setShowDroppTrash(false);
         setChanged(false);
-        setLoading(false);
+        setLoadingBack(false);
 
 
     }
@@ -215,15 +234,18 @@ function TabPanelFamily({ families, family, index, handleAddMember, handleRemove
     }
     return (
         <>
-            <Backdrop open={loading} className={classes.backdrop}>
+            <Backdrop open={loadingBack} className={classes.backdrop}>
                 <CircularProgress color='inherit' />
             </Backdrop>
             <TabPanel value={valueTab} key={index} index={index} className={classes.root}>
+                { loadingMembers?<CircularProgress />:
+                (
+                    <>
                 <Typography variant='body2' style={{ fontStyle: 'italic' }} align='center' color='textSecondary'>Creador {creator}</Typography>
                 <DragDropContext onBeforeCapture={handleOnBeforeCapture} onDragEnd={handleOnDragEnd}>
                     <div className={classes.containerList}>
                         <Typography color='textSecondary'>Administradores</Typography>
-                        <Droppable droppableId='admins' direction='horizontal'>
+                        {admins && <Droppable droppableId='admins' direction='horizontal'>
 
                             {(provided, snapshot) => (
                                 <List
@@ -257,11 +279,11 @@ function TabPanelFamily({ families, family, index, handleAddMember, handleRemove
                                 </List>
 
                             )}
-                        </Droppable>
+                        </Droppable>}
                     </div>
                     <div className={classes.containerList}>
                         <Typography color='textSecondary'>Miembros</Typography>
-                        <Droppable droppableId='members' direction='horizontal'>
+                        {members && <Droppable droppableId='members' direction='horizontal'>
                             {(provided, snapshot) => (
                                 <List
                                     className={classes.list}
@@ -292,7 +314,7 @@ function TabPanelFamily({ families, family, index, handleAddMember, handleRemove
                                 </List>
 
                             )}
-                        </Droppable>
+                        </Droppable>}
                     </div>
                     {showDroppTrash &&
                         <div className={classes.containerListTrash}>
@@ -352,6 +374,9 @@ function TabPanelFamily({ families, family, index, handleAddMember, handleRemove
                         </List>
                     </div>
                 </DragDropContext>
+                    </>
+                )
+                }
 
             </TabPanel>
         </>
@@ -388,4 +413,4 @@ function equalIgnoreOrder(a, b) {
     }
     return true;
 }
-export default TabPanelFamily
+export default TabPanelMembers

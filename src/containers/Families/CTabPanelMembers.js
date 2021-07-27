@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
-import TabPanelFamily from '../../components/Families/TabPanelFamily/TabPanelFamily'
-import { addMemberFamily, removeMemberFamily, addAdminFamily, removeAdminFamily } from '../../actions/families';
+import TabPanelMembers from '../../components/Families/TabPanelMembers/TabPanelMembers'
+import {  getMembersFamily,addMemberFamily, removeMemberFamily, addAdminFamily, removeAdminFamily } from '../../actions/families';
 
 
 const mapStateToProps = (state, ownProps)=>{
@@ -13,11 +13,12 @@ const mapStateToProps = (state, ownProps)=>{
 }
 const mapDispatchToProps = (dispatch)=>{
     return {
+        handleGetMembersFamily : (cancel, idfamily)=>dispatch(getMembersFamily(cancel, idfamily)),
         handleAddMember : (idfamily, username)=>dispatch(addMemberFamily(idfamily, username)),
         handleRemoveMember : (idfamily, username)=>dispatch(removeMemberFamily(idfamily, username)),
         handleAddAdmin : (idfamily, username)=>dispatch(addAdminFamily(idfamily, username)),
         handleRemoveAdmin : (idfamily, username)=>dispatch(removeAdminFamily(idfamily, username)),
     }
 }
-const CListFamilies = connect(mapStateToProps, mapDispatchToProps)(TabPanelFamily)
-export default CListFamilies;
+const CTabPanelMembers = connect(mapStateToProps, mapDispatchToProps)(TabPanelMembers)
+export default CTabPanelMembers;

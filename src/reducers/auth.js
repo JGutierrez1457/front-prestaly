@@ -1,12 +1,12 @@
 import { AUTH, LOGOUT } from "../constants/actionsTypes";
-const auth = (state = { auth : JSON.parse(localStorage.getItem('token'))}, action)=>{
+const auth = (state = JSON.parse(localStorage.getItem('token')) || {}, action)=>{
     switch(action.type){
         case AUTH:
             localStorage.setItem('token', JSON.stringify({...action?.payload}));
-            return { ...state, auth : action?.payload }
+            return action.payload
         case LOGOUT:
             localStorage.removeItem('token');
-            return { ...state, auth : null }
+            return null
         default : return state
     }
 }

@@ -1,41 +1,22 @@
-import { Tabs, Tab, Typography, CircularProgress, useMediaQuery, useTheme } from '@material-ui/core';
+import { Tabs, Tab, Typography, useMediaQuery, useTheme } from '@material-ui/core';
 import React from 'react';
-import { useEffect } from 'react';
 import { useState } from 'react';
 import Drawer from '../../Drawer/Drawer'
 import useStyles from './styles'
-import CTabPanelFamily from '../../../containers/Families/CTabPanelFamily'
-import axios from 'axios'
+import { cloneElement } from 'react';
 
-function ListFamilies({ families, handleGetFamilies }) {
+function ListFamilies({ families, children}) {
     const theme = useTheme();
     const xs = useMediaQuery(theme.breakpoints.down('xs'));
     const classes = useStyles();
-    const [valueTab, setValueTab] = useState(0);
-    const [ loading, setLoading] = useState(true);
+    const [ valueTab, setValueTab] = useState(0);
     const handleChangeTab = (e, newValue) => {
         setValueTab(newValue)
     }
-    useEffect(() => {
-        let cancel;
-        const getFamilies = async ()=>{
-            try {
-                await handleGetFamilies(new axios.CancelToken( c => cancel = c))
-                setLoading(false)
-            } catch (error) {
-                if(axios.isCancel(error))return;
-            }
-        }
-        getFamilies();
-        return ()=>cancel();
-    }, [handleGetFamilies])
     return (
         <Drawer >
-            <Typography variant='h6'>Familias</Typography>
-            {( loading === true)?(
-            <CircularProgress />
-            ):(
-                (families.length === 0)?(<Drawer><h1>No tienes familias</h1></Drawer>):(
+            <Typography variant='h6' align='center'>Familias</Typography>
+                {(families.length === 0)?(<Drawer><h1>No tienes familias</h1></Drawer>):(
             <div className={classes.root}>
                 <Tabs
                     orientation={xs?"horizontal":"vertical"}
@@ -50,12 +31,15 @@ function ListFamilies({ families, handleGetFamilies }) {
                     })}
                 </Tabs>
                 {families.map((family, index) => {
-                    return <CTabPanelFamily key={index} valueTab={valueTab} idfamily={family._id} index={index} />
+                        return cloneElement(children, {
+                            key : index,
+                            valueTab,
+                            idfamily : family._id,
+                            index
+                    })
                 })}
             </div>
-                )
-                
-            )}
+                )}
         </Drawer>
 
     )

@@ -3,9 +3,9 @@ import Drawer from '../../Drawer/Drawer'
 
 function ListLoans() {
     return (
-        <Drawer>
+        <div>
             Loans
-        </Drawer>
+        </div>
     )
 }
 

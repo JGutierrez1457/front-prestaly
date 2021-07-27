@@ -1,13 +1,15 @@
 import { Route, BrowserRouter as Router, Switch, Redirect } from 'react-router-dom';
 import Home from "./components/Home/Home";
 import CSignIn from "./containers/Auth/CSignIn";
-import ListLoans from './components/Loans/ListLoans/ListLoans';
 import { useSelector } from 'react-redux';
-import CListFamilies from './containers/Families/CListFamilies';
+import ListFamilies from './components/Families/ListFamilies/ListFamilies';
+import CTabPanelMembers from './containers/Families/CTabPanelMembers';
+import Board from './components/Board/Board';
  var auth;
+ var families;
 function App() {
-   auth = useSelector( state => state.auth?.auth?.token);
-
+   auth = useSelector( state => state.auth?.token);
+   families = useSelector( state => state.auth?.families);
   return (
     <div className="App">
       <Router>
@@ -21,10 +23,12 @@ function App() {
             return <CSignIn {...props} />
             }} />
           <PrivateRoute path='/families'>
-            <CListFamilies />
+            <ListFamilies families={families}>
+              <CTabPanelMembers />
+            </ListFamilies>
           </PrivateRoute>
-          <PrivateRoute path='/loans'>
-            <ListLoans />
+          <PrivateRoute path='/board'>
+            <Board />
           </PrivateRoute>
         </Switch>
       </Router>

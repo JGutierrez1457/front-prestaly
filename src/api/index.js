@@ -9,12 +9,11 @@ API.interceptors.request.use(req=>{
     return req;
 })
 
-export const getMembers = (cancel) =>API.get(`/api/families`,{ cancelToken : cancel});
+export const getMembers = (cancel, idfamily) =>API.get(`/api/families/${idfamily}/members`,{ cancelToken : cancel});
+
 export const addMember = (idfamily,username)=>API.patch(`/api/families/${idfamily}/members/${username}/add`)
 export const removeMember = (idfamily,username)=>API.patch(`/api/families/${idfamily}/members/${username}/delete`)
 export const addAdmin = (idfamily,username)=>API.patch(`/api/families/${idfamily}/admins/${username}/add`)
 export const removeAdmin = (idfamily,username)=>API.patch(`/api/families/${idfamily}/admins/${username}/delete`)
-
-
 
 export const signIn = (data)=>API.post('/api/auth/signin',data);

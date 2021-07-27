@@ -1,17 +1,17 @@
-import { GET_MY_FAMILIES, EDIT_MEMBERS, EDIT_ADMINS, EDIT_CREATOR} from '../constants/actionsTypes'
+import { GET_MEMBERS_BY_FAMILY, EDIT_MEMBERS, EDIT_ADMINS, EDIT_CREATOR} from '../constants/actionsTypes'
 import * as API from '../api'
-export const getMembersFamily = (cancel)=>async(dispatch)=>{
+export const getMembersFamily = (cancel, idfamily)=>async(dispatch)=>{
     try {
-        const { data } = await API.getMembers(cancel);
+        const { data } = await API.getMembers(cancel, idfamily);
         dispatch({
-            type : GET_MY_FAMILIES,
+            type : GET_MEMBERS_BY_FAMILY,
             payload : data
         })
         return 'success'
     } catch (error) {
         if(error.response.status === 401 ){
             dispatch({
-                type : GET_MY_FAMILIES,
+                type : GET_MEMBERS_BY_FAMILY,
                 payload : []
             })
         }
@@ -36,7 +36,7 @@ export const addMemberFamily = (idfamily, username)=>async(dispatch)=>{
 export const removeMemberFamily = (idfamily, username)=>async(dispatch)=>{
     try {
         const { data } = await API.removeMember(idfamily, username);
-        const datafamilies= await API.getMembers();
+        const datafamilies= await API.getMembers(null, idfamily);
 
         const message = data.message;
         delete data.message;
@@ -45,7 +45,7 @@ export const removeMemberFamily = (idfamily, username)=>async(dispatch)=>{
             payload : data
         })
         dispatch({
-            type : GET_MY_FAMILIES,
+            type : GET_MEMBERS_BY_FAMILY,
             payload : datafamilies.data
         })
         if(data?.creator){

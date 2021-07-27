@@ -101,7 +101,7 @@ export default function MiDrawer({children}) {
                         </ListItemIcon>
                         <ListItemText primary={'Mis familias'} />
                     </ListItem>
-                    <ListItem button key={'Mis prestamos'} component={Link} to={`/loans`}>
+                    <ListItem button key={'Mis prestamos'} component={Link} to={`/board`}>
                         <ListItemIcon>
                             <LocalAtmIcon />
                         </ListItemIcon>
