@@ -1,4 +1,4 @@
-import { GET_MEMBERS_BY_FAMILY, EDIT_MEMBERS, EDIT_ADMINS, EDIT_CREATOR, GET_BALANCES_BY_FAMILY, GET_NO_BALANCEDS_BY_FAMILY} from '../constants/actionsTypes'
+import { GET_MEMBERS_BY_FAMILY, EDIT_MEMBERS, EDIT_ADMINS, EDIT_CREATOR, GET_BALANCES_BY_FAMILY, GET_NO_BALANCEDS_BY_FAMILY, GENERATE_BALANCE_BY_FAMILY} from '../constants/actionsTypes'
 import * as API from '../api'
 export const getMembersFamily = (cancel, idfamily)=>async(dispatch)=>{
     try {
@@ -49,6 +49,33 @@ export const getNoBalancedsFamily = (cancel, idfamily)=>async(dispatch)=>{
                 payload : []
             })
         }
+    }
+}
+export const generateBalanceByFamily = (idfamily)=>async(dispatch)=>{
+    try {
+        const { data } = await API.generateBalance( idfamily);
+        const dataNoBalanceds = await API.getNoBalanceds(null, idfamily);
+        const message = data.message;
+        delete data.message;
+        dispatch({
+            type : GENERATE_BALANCE_BY_FAMILY,
+            payload : data
+        })
+        dispatch({
+            type : GET_NO_BALANCEDS_BY_FAMILY,
+            payload : dataNoBalanceds.data
+        })
+        return message
+    } catch (error) {
+        if(error.response.status === 401 ){
+            dispatch({
+                type : GENERATE_BALANCE_BY_FAMILY,
+                payload : []
+            })
+        }
+        let err = new Error(error.response.data);
+        err.status = error.response.status;
+        throw err;
     }
 }
 export const addMemberFamily = (idfamily, username)=>async(dispatch)=>{

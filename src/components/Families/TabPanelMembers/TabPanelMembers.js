@@ -367,7 +367,7 @@ function TabPanelMembers({ families, family, index,handleGetMembersFamily, handl
                             <ListItem>
                                 <form className={classes.listButton} onSubmit={onClickAddMember} >
                                     <TextField value={newMember} required onChange={handleChange} disabled={changed} variant='outlined' label='Ingrese usuario' />
-                                    <Button variant='contained' color='primary' disabled={changed} type='submit'>Agregar</Button>
+                                    <Button variant='contained' size='small' color='primary' disabled={changed} type='submit'>Agregar</Button>
                                 </form>
                             </ListItem>
 

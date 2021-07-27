@@ -24,7 +24,7 @@ export default makeStyles((theme)=>({
         display : 'flex',
         flexDirection : 'row',
         '& .MuiButtonBase-root':{
-            margin : theme.spacing(0,3),
+            margin : theme.spacing(1,3),
         },       
         [theme.breakpoints.down('xs')]:{
             flexDirection : 'column',
