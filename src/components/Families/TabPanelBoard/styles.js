@@ -5,6 +5,7 @@ export default makeStyles((theme)=>({
         maxWidth : '800px',
         [theme.breakpoints.down('xs')]:{
             padding : theme.spacing(2,1),
+            maxWidth : '300px'
         }
 
     },
