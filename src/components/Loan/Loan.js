@@ -52,8 +52,8 @@ function Balance({ family, subject, creator, quantity, spenders, beneficiaries, 
                 <Typography variant='body2' ><b>Gasto Total:</b> s/{quantity}</Typography>
                 <Typography variant='body2' ><b>Prestadores:</b> {spenders.map(s => `${s.username} (s/${s.expense})`).toString()}</Typography>
                 <Typography variant='body2' ><b>Beneficiarios:</b> {beneficiaries.toString()}</Typography>
-                <Typography variant='body2' ><b>Productos propios:</b><br /></Typography>{own_products.map((o) => (<div key={o.username}>&emsp;<b>{o.username}</b><ul style={{ margin: '7px 0px' }}>{o.products.map((p, index) => (<li key={index}>Nombre: {p.name}, Precio: s/{p.price}, Descuento: {p.discount}</li>))}</ul></div>))}
-                <Typography variant='body2' ><b>Productos excluidos:</b><br /></Typography>{exclude_products.map((e) => (<div key={e.username}>&emsp;<b>{e.username}</b><ul style={{ margin: '7px 0px' }}>{e.products.map((p, index) => (<li key={index} >Nombre: {p.name}, Precio: s/{p.price}, Descuento: {p.discount}</li>))}</ul></div>))}
+                <Typography variant='body2' ><b>Productos propios:</b><br /></Typography>{(own_products.length === 0)?(<>&emsp;No hay productos</>):own_products.map((o) => (<div key={o.username}>&emsp;<b>{o.username}</b><ul style={{ margin: '7px 0px' }}>{o.products.map((p, index) => (<li key={index}>Nombre: {p.name}, Precio: s/{p.price}, Descuento: {p.discount}</li>))}</ul></div>))}
+                <Typography variant='body2' ><b>Productos excluidos:</b><br /></Typography>{(exclude_products.length === 0 )?(<>&emsp;No hay productos</>):exclude_products.map((e) => (<div key={e.username}>&emsp;<b>{e.username}</b><ul style={{ margin: '7px 0px' }}>{e.products.map((p, index) => (<li key={index} >Nombre: {p.name}, Precio: s/{p.price}, Descuento: {p.discount}</li>))}</ul></div>))}
                 <div className={classes.containerLoans}>
                     {sub_balance.map((b, index) => (<div className={classes.subBalance} key={index}><b>{b.username} : </b><b style={{ color: b.amount < 0 ? '#f44336' : '#3f51b5', }}>{((b.amount < 0) ? ('-s/') : ('s/')) + Math.abs(b.amount)}</b></div>))}
                 </div>
@@ -89,7 +89,17 @@ function Balance({ family, subject, creator, quantity, spenders, beneficiaries, 
                                 <AddBoxIcon style={{fill : "#3f51b5"}}/>
                             </IconButton>}
                     </div>
-                    <Typography variant='body2' ><b>Beneficiarios:</b></Typography> {beneficiaries.toString()}
+                    <Typography variant='body2' ><b>Beneficiarios:</b></Typography> 
+                        <Autocomplete
+                            multiple
+                            options={optionsSpenders}
+                            value={[...dataLoan.beneficiaries]}
+                            style={{ width: 300 }}
+                            filterSelectedOptions
+                            onChange={(e, newValue) => {
+                                setDataLoan({ ...dataLoan, beneficiaries: newValue })
+                            }}
+                            renderInput={(params) => (<TextField label="Beneficiarios" {...params} />)} />
                     <Typography variant='body2' ><b>Productos propios:</b></Typography><br />
                     <Typography variant='body2' ><b>Productos excluidos:</b></Typography><br />
                     <div className={classes.containerLoans}>
