@@ -21,7 +21,7 @@ function ListLoans({ handleGetNoBalancedsFamily, idFamily, family}) {
         getLoans();
         return ()=>cancel();
     }, [handleGetNoBalancedsFamily, idFamily]);
-    if(family.no_balanceds && family.no_balanceds.length !== 0 ){return <div className={classes.containerLoans}>{family.no_balanceds.map( (loan, index) =><Loan key={index} {...loan}  /> )}</div>}
+    if(family.no_balanceds && family.no_balanceds.length !== 0 ){return <div className={classes.containerLoans}>{family.no_balanceds.map( (loan, index) =><Loan key={index} {...loan} family={family} /> )}</div>}
     if(family.no_balanceds && family.no_balanceds.length === 0 ){return <p> Ningún Prestamo</p>}
     if(!family.no_balanceds){return <CircularProgress />}
 }

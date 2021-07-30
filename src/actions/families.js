@@ -37,6 +37,11 @@ export const getBalancesFamily = (cancel, idfamily)=>async(dispatch)=>{
 export const getNoBalancedsFamily = (cancel, idfamily)=>async(dispatch)=>{
     try {
         const { data } = await API.getNoBalanceds(cancel, idfamily);
+        const dataMembers = await API.getMembers(null, idfamily);
+        dispatch({
+            type : GET_MEMBERS_BY_FAMILY,
+            payload : dataMembers.data
+        })
         dispatch({
             type : GET_NO_BALANCEDS_BY_FAMILY,
             payload : data

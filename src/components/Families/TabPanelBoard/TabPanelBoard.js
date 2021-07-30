@@ -18,7 +18,7 @@ function TabPanelBoard({ families, family, index, valueTab, getPDFNoBalanceds, o
     useEffect(()=>{
         if(family.no_balanceds && family.no_balanceds.length !== 0 )setAreLoans(true)
         if(family.no_balanceds && family.no_balanceds.length === 0 )setAreLoans(false)
-    }, [family])
+    }, [family]);
     const idFamily = family._id;
     const classes = useStyles();
     const handleGetPDF = async()=>{
