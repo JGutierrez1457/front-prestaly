@@ -5,12 +5,14 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import CListBalances from '../../../containers/Balances/CListBalances';
+import CAddLoan from '../../../containers/Loans/CAddLoan';
 import CListLoans from '../../../containers/Loans/CListLoans';
 import useStyles from './styles'
 
 function TabPanelBoard({ families, family, index, valueTab, getPDFNoBalanceds, onGenerateBalance }) {
     const [ expanded, setExpanded ] = useState(false);
     const [ areLoans, setAreLoans ] = useState(false);
+    const [ addLoan, setAddLoan ] =useState(false);
     const history = useHistory();
     const handleExpandPanels = (panel)=>(e, isExpanded)=>{
         setExpanded(isExpanded ? panel : false);
@@ -78,6 +80,8 @@ function TabPanelBoard({ families, family, index, valueTab, getPDFNoBalanceds, o
                 </AccordionActions>
                 </>}
             </Accordion>
+            {!addLoan && <Button fullWidth variant='contained' color='primary' style={{ margin:'8px'}} onClick={()=>setAddLoan(true)}>Agregar prestamo</Button>}
+            {addLoan && <CAddLoan setAddLoan={setAddLoan} family={family}/>}
         </TabPanel>
     )
 }
