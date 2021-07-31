@@ -1,19 +1,16 @@
-import React,{ useState, useEffect} from 'react'
+import React,{ useEffect} from 'react'
 import axios from 'axios'
 import Loan from '../../Loan/Loan'
 import { CircularProgress } from '@material-ui/core';
 import useStyle  from './styles'
 
 function ListLoans({ handleGetNoBalancedsFamily, handleUpdateLoan, idFamily, family}) {
-    const [ loadingLoans, setLoadingLoans ] = useState(false);
     const classes = useStyle();
     useEffect(() => {
         let cancel;
         const getLoans = async ()=>{
             try {
-                setLoadingLoans(true);
                 await handleGetNoBalancedsFamily(new axios.CancelToken( c => cancel = c),idFamily )
-                setLoadingLoans(false);
             } catch (error) {
                 if(axios.isCancel(error))return;
             }

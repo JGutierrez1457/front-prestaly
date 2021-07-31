@@ -1,5 +1,5 @@
 import { Divider, IconButton, Typography } from '@material-ui/core'
-import React, { useEffect } from 'react'
+import React from 'react'
 import useStyle from './styles';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import dateFormat from 'dateformat';
