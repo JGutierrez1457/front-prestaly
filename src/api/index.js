@@ -1,5 +1,5 @@
 import axios from 'axios';
-let API_URL='http://localhost:3000';
+let API_URL='https://api-prestaly.herokuapp.com';
 const API = axios.create({ baseURL : API_URL});
 API.interceptors.request.use(req=>{
     const userLocal = localStorage.getItem('token');
