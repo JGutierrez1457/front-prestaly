@@ -28,20 +28,5 @@ title:{
     '& .MuiIconButton-root':{
         padding : 0
     }
-},
-spendersEdit:{
-    display: 'flex',
-    justifyContent : 'space-evenly',
-    alignItems : 'flex-end',
-    '& .MuiButtonBase-root':{
-        paddingBottom : 0,
-        borderRadius : 0
-    }
-},
-containerSpendersEdit:{
-    display : 'flex',
-    flexDirection : 'column',
-    alignItems :'stretch',
-    margin : theme.spacing(2,0)
 }
 }))

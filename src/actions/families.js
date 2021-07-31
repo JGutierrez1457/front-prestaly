@@ -1,4 +1,4 @@
-import { GET_MEMBERS_BY_FAMILY, EDIT_MEMBERS, EDIT_ADMINS, EDIT_CREATOR, GET_BALANCES_BY_FAMILY, GET_NO_BALANCEDS_BY_FAMILY, GENERATE_BALANCE_BY_FAMILY} from '../constants/actionsTypes'
+import { GET_MEMBERS_BY_FAMILY, EDIT_MEMBERS, EDIT_ADMINS, EDIT_CREATOR, GET_BALANCES_BY_FAMILY, GET_NO_BALANCEDS_BY_FAMILY, GENERATE_BALANCE_BY_FAMILY, EDIT_LOAN} from '../constants/actionsTypes'
 import * as API from '../api'
 export const getMembersFamily = (cancel, idfamily)=>async(dispatch)=>{
     try {
@@ -164,4 +164,21 @@ export const removeAdminFamily = (idfamily, username)=>async(dispatch)=>{
         err.status = error.response.status;
         throw err;
     }
+}
+export const updateLoan = (idloan, idfamily, dataLoan)=>async(dispatch)=>{
+    try {
+        const { data } = await API.updateLoan(idloan, idfamily, dataLoan);
+        const message = data.message;
+        delete data.message;
+        dispatch({
+            type : EDIT_LOAN,
+            payload : data
+        })
+        return message;
+    } catch (error) {
+        let err = new Error(error.response.data);
+        err.status = error.response.status;
+        throw err;
+    }
+
 }

@@ -1,4 +1,4 @@
-import { GET_MY_FAMILIES, EDIT_ADMINS, EDIT_MEMBERS, EDIT_CREATOR, GET_MEMBERS_BY_FAMILY, GET_BALANCES_BY_FAMILY, GET_NO_BALANCEDS_BY_FAMILY, GENERATE_BALANCE_BY_FAMILY } from '../constants/actionsTypes';
+import { GET_MY_FAMILIES, EDIT_ADMINS, EDIT_MEMBERS, EDIT_CREATOR, GET_MEMBERS_BY_FAMILY, GET_BALANCES_BY_FAMILY, GET_NO_BALANCEDS_BY_FAMILY, GENERATE_BALANCE_BY_FAMILY, EDIT_LOAN } from '../constants/actionsTypes';
 const families = ( state = JSON.parse(localStorage.getItem('token'))?.families || [], action )=>{
     switch(action.type){
         case GET_MY_FAMILIES:
@@ -17,6 +17,8 @@ const families = ( state = JSON.parse(localStorage.getItem('token'))?.families |
             return state.map( f => (f._id === action.payload.family)?{...f, admins : action.payload.admins }:f)
         case EDIT_CREATOR:
             return state.map( f => (f._id === action.payload.family)?{...f, creator : action.payload.creator }:f)
+        case EDIT_LOAN:
+            return state.map( f => (f._id === action.payload.family)?{...f, no_balanceds : f.no_balanceds.map( l =>(l._id === action.payload.idloan)?(action.payload.loan):(l)) }:f)
         default:
             return state
     }

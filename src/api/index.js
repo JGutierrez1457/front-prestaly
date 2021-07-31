@@ -20,5 +20,6 @@ export const addMember = (idfamily,username)=>API.patch(`/api/families/${idfamil
 export const removeMember = (idfamily,username)=>API.patch(`/api/families/${idfamily}/members/${username}/delete`)
 export const addAdmin = (idfamily,username)=>API.patch(`/api/families/${idfamily}/admins/${username}/add`)
 export const removeAdmin = (idfamily,username)=>API.patch(`/api/families/${idfamily}/admins/${username}/delete`)
+export const updateLoan = (idloan, idfamily, data)=>API.patch(`/api/loans/${idloan}/families/${idfamily}`,data)
 
 export const signIn = (data)=>API.post('/api/auth/signin',data);

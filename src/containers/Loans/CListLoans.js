@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 import ListLoans from '../../components/Loans/ListLoans/ListLoans'
-import { getNoBalancedsFamily } from '../../actions/families'
+import { getNoBalancedsFamily, updateLoan } from '../../actions/families'
 
 const mapStateToProps = (state, ownProps)=>{
     return {
@@ -10,7 +10,8 @@ const mapStateToProps = (state, ownProps)=>{
 }
 const mapDispatchToProps = (dispatch)=>{
     return {
-      handleGetNoBalancedsFamily : (cancel, idfamily)=>dispatch(getNoBalancedsFamily(cancel, idfamily))
+      handleGetNoBalancedsFamily : (cancel, idfamily)=>dispatch(getNoBalancedsFamily(cancel, idfamily)),
+      handleUpdateLoan : (idloan, idfamily, data)=>dispatch(updateLoan(idloan, idfamily, data))
     }
 }
 const CListLoans = connect(mapStateToProps, mapDispatchToProps)(ListLoans);
