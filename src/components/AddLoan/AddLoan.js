@@ -70,16 +70,17 @@ function AddLoan({setAddLoan, handleCreateLoan, members, idfamily}) {
         try {
             const message = await handleCreateLoan(idfamily, loan)
             handleNotifyVariant('success', message);
+            setLoadingBack(false)
             setAddLoan(false);
         } catch (error) {
             if (error.status === 400) {
+                setLoadingBack(false) 
                 handleNotifyVariant('warning', error.message);
             }
             if (error.status === 404) {
+                setLoadingBack(false)
                 handleNotifyVariant('error', error.message);
             }
-        }finally{
-            setLoadingBack(false)
         }
     }
     const handleChange = (e) => {
