@@ -18,7 +18,21 @@ containerBeneficiaries:{
 },
 containerProducts:{
     display : 'flex',
-    justifyContent : 'space-evenly'
+    justifyContent : 'space-evenly',
+    '& .MuiTextField-root':{
+        width : '25%',
+        [theme.breakpoints.down('xs')]:{
+            width : '80%',
+        }
+    },
+    [theme.breakpoints.down('xs')]:{
+        flexWrap :'wrap',
+        justifyContent : 'center',
+        '& .MuiButtonBase-root':{
+            width : '80%',
+            marginBottom : theme.spacing(3)
+        }
+    }
 },
 containerProductMember:{
     display : 'flex',
