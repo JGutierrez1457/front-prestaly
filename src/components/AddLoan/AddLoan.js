@@ -1,4 +1,4 @@
-import { Paper, Typography, Button, TextField, InputAdornment, IconButton, Backdrop, CircularProgress } from '@material-ui/core'
+import { Paper, Typography, Button, TextField, IconButton, Backdrop, CircularProgress } from '@material-ui/core'
 import { Delete as DeleteIcon, AddBox as AddBoxIcon } from '@material-ui/icons'
 import { Autocomplete } from '@material-ui/lab'
 import React from 'react'
@@ -6,7 +6,7 @@ import { useState } from 'react'
 import useStyles from './styles'
 import dateFormat from 'dateformat';
 import { useSnackbar } from 'notistack'
-
+import NumberFormat from 'react-number-format'
 
 function AddLoan({setAddLoan, handleCreateLoan, members, idfamily}) {
     const classes = useStyles();
@@ -18,7 +18,7 @@ function AddLoan({setAddLoan, handleCreateLoan, members, idfamily}) {
         {
             date: dateFormat(new Date(), "yyyy-mm-dd"),
             subject : '',
-            quantity:0,
+            quantity:'',
             spenders : [],
             beneficiaries : [],
             own_products : [],
@@ -97,21 +97,21 @@ function AddLoan({setAddLoan, handleCreateLoan, members, idfamily}) {
     }
 
     const handleAddSpender = () => {
-        setLoan({ ...loan, spenders: [...loan.spenders, { username: members.find(e => !loan.spenders.some(s => s.username === e)), expense: 0 }] })
+        setLoan({ ...loan, spenders: [...loan.spenders, { username: members.find(e => !loan.spenders.some(s => s.username === e)), expense: '' }] })
     }
     const handleAddOwnProduct = () => {
         const setBeneficiariesSpenders = [...new Set([...loan.beneficiaries, ...loan.spenders.map( s=> s.username)])];
-        setLoan({ ...loan, own_products: [...loan.own_products, { username: setBeneficiariesSpenders.find(e => !loan.own_products.some(s => s.username === e)), products: [{ name: '', price: 0, discount: 0 }] }] })
+        setLoan({ ...loan, own_products: [...loan.own_products, { username: setBeneficiariesSpenders.find(e => !loan.own_products.some(s => s.username === e)), products: [{ name: '', price: '', discount: '' }] }] })
     }
     const handleAddProductOwn = (index) => {
-        setLoan({ ...loan, own_products: loan.own_products.map((o, i) => i === index ? ({ ...o, products: [...o.products, { name: '', price: 0, discount: 0 }] }) : (o)) })
+        setLoan({ ...loan, own_products: loan.own_products.map((o, i) => i === index ? ({ ...o, products: [...o.products, { name: '', price: '', discount: '' }] }) : (o)) })
     }
     const handleAddExcludeProduct = () => {
         const setBeneficiariesSpenders = [...new Set([...loan.beneficiaries, ...loan.spenders.map( s=> s.username)])];
-        setLoan({ ...loan, exclude_products: [...loan.exclude_products, { username: setBeneficiariesSpenders.find(e => !loan.exclude_products.some(s => s.username === e)), products: [{ name: '', price: 0, discount: 0 }] }] })
+        setLoan({ ...loan, exclude_products: [...loan.exclude_products, { username: setBeneficiariesSpenders.find(e => !loan.exclude_products.some(s => s.username === e)), products: [{ name: '', price: '', discount: '' }] }] })
     }
     const handleAddProductExclude = (index) => {
-        setLoan({ ...loan, exclude_products: loan.exclude_products.map((o, i) => i === index ? ({ ...o, products: [...o.products, { name: '', price: 0, discount: 0 }] }) : (o)) })
+        setLoan({ ...loan, exclude_products: loan.exclude_products.map((o, i) => i === index ? ({ ...o, products: [...o.products, { name: '', price: '', discount: '' }] }) : (o)) })
     }
     const handleDeleteSpender = (indexSpender) => {
         setLoan({ ...loan, spenders: loan.spenders.filter((s, index) => index !== indexSpender) })
@@ -138,7 +138,7 @@ function AddLoan({setAddLoan, handleCreateLoan, members, idfamily}) {
             <form onSubmit={handleAddLoan}>
                     <Typography variant='body2'><b>Fecha:</b></Typography> <TextField required name='date' variant='standard' style={{ marginBottom: '16px' }} type='date' value={loan.date} onChange={handleChange} />
                     <Typography variant='body2' ><b>Asunto:</b></Typography> <TextField name='subject' label="Ej. Makro" variant='standard' style={{ marginBottom: '16px' }} type='text' value={loan.subject} onChange={handleChange} />
-                    <Typography variant='body2' ><b>Gasto Total:</b></Typography><TextField required name='quantity' variant='standard' style={{ marginBottom: '16px' }} type='number' value={loan.quantity} onChange={(e)=>setLoan({...loan, 'quantity':Number(e.target.value)})} InputProps={{ startAdornment: <InputAdornment position='start'>s/</InputAdornment> }} />
+                    <Typography variant='body2' ><b>Gasto Total:</b></Typography><TextField required name='quantity' label="Ej. 300.5" variant='standard' style={{ marginBottom: '16px' }} value={loan.quantity} onChange={(e)=>setLoan({...loan, 'quantity':Number(e.target.value)})} InputProps={{ inputComponent: NumberFormatCustom }} />
                     <Typography variant='body2' ><b>Prestadores:</b></Typography><div className={classes.containerSpendersEdit}>{
                         loan.spenders.map((s, index) =>
                             <div className={classes.spendersEdit} key={index}>
@@ -156,11 +156,11 @@ function AddLoan({setAddLoan, handleCreateLoan, members, idfamily}) {
                                     name='expense'
                                     label='Prestamo'
                                     variant='standard'
-                                    type='number'
-                                    style={{ width: '20%' }}
+                                    style={{ width: '40%' }}
                                     value={s.expense}
-                                    onChange={(e) => handleChangeExpenseSpenders(e, index)} />
-                                <IconButton onClick={() => handleDeleteSpender(index)} style={{ top: '12px' }}>
+                                    onChange={(e) => handleChangeExpenseSpenders(e, index)} 
+                                    InputProps={{ inputComponent : NumberFormatCustom }}/>
+                                <IconButton onClick={() => handleDeleteSpender(index)} style={{ padding: 0 }}>
                                     <DeleteIcon style={{ fill: "#f44336" }} />
                                 </IconButton>
                             </div>)}
@@ -201,9 +201,9 @@ function AddLoan({setAddLoan, handleCreateLoan, members, idfamily}) {
                                     </div>
                                     {o.products.map((p, indexP) =>
                                         <div key={indexP} className={classes.containerProducts}>
-                                            <TextField required name="name" label='nombre' value={p.name} style={{ width: '40%' }} onChange={(e) => handleChangeOwnProducts(e, index, indexP)} />
-                                            <TextField required name="price" type='number' label='precio' value={p.price} style={{ width: '15%' }} onChange={(e) => handleChangeOwnProducts(e, index, indexP)} />
-                                            <TextField required name="discount" type='number' label='descuento' value={p.discount} style={{ width: '15%' }} onChange={(e) => handleChangeOwnProducts(e, index, indexP)} />
+                                            <TextField required name="name" label='nombre' value={p.name}  onChange={(e) => handleChangeOwnProducts(e, index, indexP)} />
+                                            <TextField required name="price" label='precio' value={p.price}  InputProps={{ inputComponent : NumberFormatCustom }} onChange={(e) => handleChangeOwnProducts(e, index, indexP)} />
+                                            <TextField required name="discount" label='descuento' value={p.discount}  InputProps={{ inputComponent : NumberFormatCustom }} onChange={(e) => handleChangeOwnProducts(e, index, indexP)} />
                                             <IconButton onClick={(e) => handleDeleteProductOwn(index, indexP)} style={{ top: '12px', padding: 0 }}>
                                                 <DeleteIcon style={{ fill: "#f44336" }} />
                                             </IconButton>
@@ -240,9 +240,9 @@ function AddLoan({setAddLoan, handleCreateLoan, members, idfamily}) {
                                     </div>
                                     {o.products.map((p, indexP) =>
                                         <div key={indexP} className={classes.containerProducts}>
-                                            <TextField required name="name" label='nombre' value={p.name} style={{ width: '40%' }} onChange={(e) => handleChangeExcludeProducts(e, index, indexP)} />
-                                            <TextField required name="price" type='number' label='precio' value={p.price} style={{ width: '15%' }} onChange={(e) => handleChangeExcludeProducts(e, index, indexP)} />
-                                            <TextField required name="discount" type='number' label='descuento' value={p.discount} style={{ width: '15%' }} onChange={(e) => handleChangeExcludeProducts(e, index, indexP)} />
+                                            <TextField required name="name" label='nombre' value={p.name}  onChange={(e) => handleChangeExcludeProducts(e, index, indexP)} />
+                                            <TextField required name="price" label='precio' value={p.price}  InputProps={{ inputComponent : NumberFormatCustom }} onChange={(e) => handleChangeExcludeProducts(e, index, indexP)} />
+                                            <TextField required name="discount" label='descuento' value={p.discount}  InputProps={{ inputComponent : NumberFormatCustom }} onChange={(e) => handleChangeExcludeProducts(e, index, indexP)} />
                                             <IconButton onClick={(e) => handleDeleteProductExclude(index, indexP)} style={{ top: '12px', padding: 0 }}>
                                                 <DeleteIcon style={{ fill: "#f44336" }} />
                                             </IconButton>
@@ -259,13 +259,34 @@ function AddLoan({setAddLoan, handleCreateLoan, members, idfamily}) {
                         </IconButton>}
                     </div>
             <div className={classes.buttons}>
-                <Button color='primary' variant='contained' type='submit'>Agregar</Button>
-                <Button color='secondary' variant='contained' onClick={()=>setAddLoan(false)}>Cancelar</Button>
+                <Button color='primary' variant='contained' size='small' type='submit'>Agregar</Button>
+                <Button color='secondary' variant='contained' size='small' onClick={()=>setAddLoan(false)}>Cancelar</Button>
             </div>
                 </form>
         </Paper>
         </>
     )
+}
+function NumberFormatCustom(props){
+    const { inputRef, onChange, ...other } = props;
+
+    return (
+      <NumberFormat
+        {...other}
+        getInputRef={inputRef}
+        onValueChange={(values) => {
+          onChange({
+            target: {
+              name: props.name,
+              value: values.value,
+            },
+          });
+        }}
+        thousandSeparator
+        isNumericString
+        prefix="s/"
+      />
+    );
 }
 
 export default AddLoan
