@@ -11,13 +11,11 @@ export default makeStyles((theme)=>({
     list :{
         display : 'flex',
         flexDirection : 'row',
-        width : 'auto',
+        maxWidth : '650px',
         overflowX : 'auto',
-        '& .MuiListSubheader-root':{
-            whiteSpace : 'nowrap'
-        } ,
-        '& .MuiButtonBase-root':{
-            margin : theme.spacing(0,3),
+        marginLeft : theme.spacing(2),
+        [theme.breakpoints.down('xs')]:{
+            maxWidth : '250px'
         }
     },
     listButton :{
@@ -37,7 +35,6 @@ export default makeStyles((theme)=>({
     containerList : {
         display : 'flex',
         alignItems : 'center',
-        justifyContent : 'stretch',
         [theme.breakpoints.down('xs')]:{
            flexDirection : 'column'
         }
@@ -66,30 +63,20 @@ export default makeStyles((theme)=>({
         flexDirection : 'row',
         border : '2px solid red',
         borderRadius : '10px',
-        width : 'auto',
+        maxWidth : '650px',
         overflowX : 'auto',
-        '& .MuiListSubheader-root':{
-            display :'flex',
-            flexDirection : 'column',
-            justifyContent : 'center'
-        },
-        '& .MuiList-root':{
-                display : 'flex',
-                flexDirection : 'row',
-                width : 'auto',
-                overflowX : 'auto'
+        [theme.breakpoints.down('xs')]:{
+            maxWidth : '250px'
         }
     },
     listItem :{
         display :'flex',
         flexDirection : 'column',
         alignContent :'center',
-        maxWidth : theme.spacing(10) ,
+        width : 'auto' ,
+        padding : theme.spacing(0),
         '& .MuiListItemIcon-root':{
             justifyContent : 'center'
-        },
-        [theme.breakpoints.down('xs')]:{
-            maxWidth : theme.spacing(5),
         }
     },
     backdrop:{
