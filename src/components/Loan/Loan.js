@@ -1,4 +1,4 @@
-import { Divider, IconButton, Typography } from '@material-ui/core'
+import { IconButton, Typography } from '@material-ui/core'
 import React, { useState } from 'react'
 import useStyle from './styles';
 import dateFormat from 'dateformat';
@@ -26,7 +26,6 @@ function Balance({ family, _id, subject, creator, quantity, spenders, beneficiar
     
     return (
         <div>
-            <Divider className={classes.divider} />
             <div className={classes.title}>
                 <Typography variant='body2' style={{ fontStyle: 'italic', marginTop: '4px' }} align='center' color='textSecondary'>Creado por {creator}</Typography>
                 <IconButton onClick={handleEdit}>

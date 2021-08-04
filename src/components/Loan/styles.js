@@ -18,10 +18,6 @@ subBalance:{
         margin : theme.spacing(0,1)
     }
 },
-divider:{
-    height: '2px',
-    backgroundColor : theme.palette.text.disabled
-},
 title:{
     display:'flex',
     justifyContent : 'space-between',

@@ -1,10 +1,12 @@
 import React, { useState} from 'react'
 import { Autocomplete } from '@material-ui/lab';
-import {Button,InputAdornment, TextField, Typography, IconButton, Backdrop, CircularProgress } from '@material-ui/core'
+import {Button, TextField, Typography, IconButton, Backdrop, CircularProgress } from '@material-ui/core'
 import { AddBox as AddBoxIcon, Delete as DeleteIcon } from '@material-ui/icons';
 import { useSnackbar } from 'notistack'
 import dateFormat from 'dateformat';
 import useStyle from './styles';
+import NumberFormat from 'react-number-format'
+
 
 
 function FormLoan({family, dataLoan, handleUpdateLoan, _id, setEdit, setDataLoan, dateLoan,  subject, quantity, spenders, beneficiaries, own_products, exclude_products}) {
@@ -127,7 +129,7 @@ function FormLoan({family, dataLoan, handleUpdateLoan, _id, setEdit, setDataLoan
         <form onSubmit={handleUpdate}>
                     <Typography variant='body2'><b>Fecha:</b></Typography> <TextField required name='date' variant='standard' style={{ marginBottom: '16px' }} type='date' value={dataLoan.date} onChange={handleChange} />
                     <Typography variant='body2' ><b>Asunto:</b></Typography> <TextField name='subject' variant='standard' style={{ marginBottom: '16px' }} type='text' value={dataLoan.subject} onChange={handleChange} />
-                    <Typography variant='body2' ><b>Gasto Total:</b></Typography><TextField required name='quantity' variant='standard' style={{ marginBottom: '16px' }} type='number' value={dataLoan.quantity} onChange={(e)=>setDataLoan({...dataLoan, 'quantity':Number(e.target.value)})} InputProps={{ startAdornment: <InputAdornment position='start'>s/</InputAdornment> }} />
+                    <Typography variant='body2' ><b>Gasto Total:</b></Typography><TextField required name='quantity' variant='standard' style={{ marginBottom: '16px' }} value={dataLoan.quantity} onChange={(e)=>setDataLoan({...dataLoan, 'quantity':Number(e.target.value)})} InputProps={{ inputComponent: NumberFormatCustom }} />
                     <Typography variant='body2' ><b>Prestadores:</b></Typography><div className={classes.containerSpendersEdit}>{
                         dataLoan.spenders.map((s, index) =>
                             <div className={classes.spendersEdit} key={index}>
@@ -145,11 +147,11 @@ function FormLoan({family, dataLoan, handleUpdateLoan, _id, setEdit, setDataLoan
                                     name='expense'
                                     label='Prestamo'
                                     variant='standard'
-                                    type='number'
-                                    style={{ width: '20%' }}
+                                    style={{ width: '40%' }}
                                     value={s.expense}
-                                    onChange={(e) => handleChangeExpenseSpenders(e, index)} />
-                                <IconButton onClick={() => handleDeleteSpender(index)} style={{ top: '12px' }}>
+                                    onChange={(e) => handleChangeExpenseSpenders(e, index)}
+                                    InputProps={{ inputComponent: NumberFormatCustom }} />
+                                <IconButton onClick={() => handleDeleteSpender(index)} style={{ padding: 0 }}>
                                     <DeleteIcon style={{ fill: "#f44336" }} />
                                 </IconButton>
                             </div>)}
@@ -190,9 +192,9 @@ function FormLoan({family, dataLoan, handleUpdateLoan, _id, setEdit, setDataLoan
                                     </div>
                                     {o.products.map((p, indexP) =>
                                         <div key={indexP} className={classes.containerProducts}>
-                                            <TextField required name="name" label='nombre' value={p.name} style={{ width: '40%' }} onChange={(e) => handleChangeOwnProducts(e, index, indexP)} />
-                                            <TextField required name="price" type='number' label='precio' value={p.price} style={{ width: '15%' }} onChange={(e) => handleChangeOwnProducts(e, index, indexP)} />
-                                            <TextField required name="discount" type='number' label='descuento' value={p.discount} style={{ width: '15%' }} onChange={(e) => handleChangeOwnProducts(e, index, indexP)} />
+                                            <TextField required name="name" label='nombre' value={p.name}  onChange={(e) => handleChangeOwnProducts(e, index, indexP)} />
+                                            <TextField required name="price" label='precio' value={p.price} InputProps={{ inputComponent: NumberFormatCustom }} onChange={(e) => handleChangeOwnProducts(e, index, indexP)} />
+                                            <TextField required name="discount" label='descuento' value={p.discount} InputProps={{ inputComponent: NumberFormatCustom }} onChange={(e) => handleChangeOwnProducts(e, index, indexP)} />
                                             <IconButton onClick={(e) => handleDeleteProductOwn(index, indexP)} style={{ top: '12px', padding: 0 }}>
                                                 <DeleteIcon style={{ fill: "#f44336" }} />
                                             </IconButton>
@@ -229,9 +231,9 @@ function FormLoan({family, dataLoan, handleUpdateLoan, _id, setEdit, setDataLoan
                                     </div>
                                     {o.products.map((p, indexP) =>
                                         <div key={indexP} className={classes.containerProducts}>
-                                            <TextField required name="name" label='nombre' value={p.name} style={{ width: '40%' }} onChange={(e) => handleChangeExcludeProducts(e, index, indexP)} />
-                                            <TextField required name="price" type='number' label='precio' value={p.price} style={{ width: '15%' }} onChange={(e) => handleChangeExcludeProducts(e, index, indexP)} />
-                                            <TextField required name="discount" type='number' label='descuento' value={p.discount} style={{ width: '15%' }} onChange={(e) => handleChangeExcludeProducts(e, index, indexP)} />
+                                            <TextField required name="name" label='nombre' value={p.name}  onChange={(e) => handleChangeExcludeProducts(e, index, indexP)} />
+                                            <TextField required name="price"  label='precio' value={p.price} InputProps={{ inputComponent: NumberFormatCustom }}  onChange={(e) => handleChangeExcludeProducts(e, index, indexP)} />
+                                            <TextField required name="discount"  label='descuento' value={p.discount} InputProps={{ inputComponent: NumberFormatCustom }}  onChange={(e) => handleChangeExcludeProducts(e, index, indexP)} />
                                             <IconButton onClick={(e) => handleDeleteProductExclude(index, indexP)} style={{ top: '12px', padding: 0 }}>
                                                 <DeleteIcon style={{ fill: "#f44336" }} />
                                             </IconButton>
@@ -255,5 +257,25 @@ function FormLoan({family, dataLoan, handleUpdateLoan, _id, setEdit, setDataLoan
                 </>
     )
 }
+function NumberFormatCustom(props){
+    const { inputRef, onChange, ...other } = props;
 
+    return (
+      <NumberFormat
+        {...other}
+        getInputRef={inputRef}
+        onValueChange={(values) => {
+          onChange({
+            target: {
+              name: props.name,
+              value: values.value,
+            },
+          });
+        }}
+        thousandSeparator
+        isNumericString
+        prefix="s/"
+      />
+    );
+}
 export default FormLoan
