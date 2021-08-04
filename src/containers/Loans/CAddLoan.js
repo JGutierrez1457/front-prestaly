@@ -5,6 +5,7 @@ import { addLoan } from '../../actions/families'
 const mapStateToProps = (state, ownProps)=>{
     return {
       setAddLoan : ownProps.setAddLoan,
+      setActiveStepAddLoan : ownProps.setActiveStepAddLoan,
       members : ownProps.family.members?.map(m => m.username),
       idfamily : ownProps.family._id
     }

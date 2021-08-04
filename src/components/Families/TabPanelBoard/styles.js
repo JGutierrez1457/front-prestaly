@@ -13,7 +13,8 @@ export default makeStyles((theme)=>({
         flexBasis : '33.33%',
         flexShrink : 0,
         fontSize : theme.typography.pxToRem(15),
-        fontWeight : 700
+        fontWeight : 700,
+        paddingRight : theme.spacing(1)
     },
     summarySecondaryHeading : {
         fontSize : theme.typography.pxToRem(15)
@@ -21,5 +22,11 @@ export default makeStyles((theme)=>({
     actions : {
         display : 'flex',
         justifyContent : 'space-evenly'
+    },
+    stepper : {
+        padding : theme.spacing(3,0 )
+    },
+    stepperContent : {
+        padding : theme.spacing(1,0 )
     }
 }))

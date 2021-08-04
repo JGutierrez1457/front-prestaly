@@ -8,7 +8,7 @@ import dateFormat from 'dateformat';
 import { useSnackbar } from 'notistack'
 import NumberFormat from 'react-number-format'
 
-function AddLoan({setAddLoan, handleCreateLoan, members, idfamily}) {
+function AddLoan({setAddLoan, setActiveStepAddLoan, handleCreateLoan, members, idfamily}) {
     const classes = useStyles();
     const { enqueueSnackbar } = useSnackbar();
     const [loadingBack, setLoadingBack] = useState(false);
@@ -71,7 +71,8 @@ function AddLoan({setAddLoan, handleCreateLoan, members, idfamily}) {
             const message = await handleCreateLoan(idfamily, loan)
             handleNotifyVariant('success', message);
             setLoadingBack(false)
-            setAddLoan(false);
+            setActiveStepAddLoan( prevstate => prevstate + 1);
+            /* setAddLoan(false); */
         } catch (error) {
             if (error.status === 400) {
                 setLoadingBack(false) 

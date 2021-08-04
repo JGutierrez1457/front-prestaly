@@ -1,4 +1,7 @@
-import { Typography, Accordion, AccordionSummary, AccordionDetails,useTheme, useMediaQuery, Button, AccordionActions, Divider } from '@material-ui/core';
+import {
+    Typography, Accordion, AccordionSummary, AccordionDetails,
+    useTheme, useMediaQuery, Button, AccordionActions, Divider, Stepper, Step, StepLabel, StepContent
+} from '@material-ui/core';
 import { ExpandMore as ExpandMoreIcon } from '@material-ui/icons';
 import React from 'react'
 import { useEffect } from 'react';
@@ -10,29 +13,30 @@ import CListLoans from '../../../containers/Loans/CListLoans';
 import useStyles from './styles'
 
 function TabPanelBoard({ families, family, index, valueTab, getPDFNoBalanceds, onGenerateBalance }) {
-    const [ expanded, setExpanded ] = useState(false);
-    const [ areLoans, setAreLoans ] = useState(false);
-    const [ addLoan, setAddLoan ] =useState(false);
+    const [expanded, setExpanded] = useState(false);
+    const [areLoans, setAreLoans] = useState(false);
+    const [addLoan, setAddLoan] = useState(false);
+    const [activeStepAddLoan, setActiveStepAddLoan] = useState(0);
     const history = useHistory();
-    const handleExpandPanels = (panel)=>(e, isExpanded)=>{
+    const handleExpandPanels = (panel) => (e, isExpanded) => {
         setExpanded(isExpanded ? panel : false);
     }
-    useEffect(()=>{
-        if(family.no_balanceds && family.no_balanceds.length !== 0 )setAreLoans(true)
-        if(family.no_balanceds && family.no_balanceds.length === 0 )setAreLoans(false)
+    useEffect(() => {
+        if (family.no_balanceds && family.no_balanceds.length !== 0) setAreLoans(true)
+        if (family.no_balanceds && family.no_balanceds.length === 0) setAreLoans(false)
     }, [family]);
     const idFamily = family._id;
     const classes = useStyles();
-    const handleGetPDF = async()=>{
+    const handleGetPDF = async () => {
         const res = await getPDFNoBalanceds(family._id)
         const file = new Blob(
             [res.data],
-            { type : 'application/pdf'}
+            { type: 'application/pdf' }
         );
         const fileURL = URL.createObjectURL(file);
         window.open(fileURL)
     }
-    const handleGenerateBalance = async()=>{
+    const handleGenerateBalance = async () => {
         try {
             const res = await onGenerateBalance(family._id);
             console.log(res)
@@ -47,41 +51,60 @@ function TabPanelBoard({ families, family, index, valueTab, getPDFNoBalanceds, o
             key={index}
             index={index}
             className={classes.root}
-            >
+        >
             <Typography variant='h6' align='center'>
-            Panel de prestamos en {family.name}
+                Panel de prestamos en {family.name}
             </Typography>
-            <Accordion expanded={ expanded === 'panelBalances'} onChange={handleExpandPanels('panelBalances')}>
+            <Accordion expanded={expanded === 'panelBalances'} onChange={handleExpandPanels('panelBalances')}>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
-                    >
-                        <Typography color='textPrimary' className={classes.summaryHeading}>Balances anteriores</Typography>
-                        <Typography color='textSecondary'  className={classes.summarySecondaryHeading}>Estos balances no se consideran en los prestamos siguientes</Typography>
+                >
+                    <Typography color='textPrimary' className={classes.summaryHeading}>Balances anteriores</Typography>
+                    <Typography color='textSecondary' className={classes.summarySecondaryHeading}>Estos balances no se consideran en los prestamos siguientes</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                     <CListBalances idFamily={idFamily} />
                 </AccordionDetails>
             </Accordion>
-            <Accordion expanded={ expanded === 'panelLoans'} onChange={handleExpandPanels('panelLoans')}>
+            <Accordion expanded={expanded === 'panelLoans'} onChange={handleExpandPanels('panelLoans')}>
                 <AccordionSummary
                     expandIcon={<ExpandMoreIcon />}
-                    >
-                        <Typography color='textPrimary' className={classes.summaryHeading}>Prestamos actuales</Typography>
-                        <Typography color='textSecondary' className={classes.summarySecondaryHeading}>Prestamos que aún no han sigo balanceados</Typography>
+                >
+                    <Typography color='textPrimary' className={classes.summaryHeading}>Prestamos actuales</Typography>
+                    <Typography color='textSecondary' className={classes.summarySecondaryHeading}>Prestamos que aún no han sigo balanceados</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                <CListLoans idFamily={idFamily}/>
+                    <CListLoans idFamily={idFamily} />
                 </AccordionDetails>
-                { areLoans && <>
-                <Divider />
-                <AccordionActions className={classes.actions}>
-                    <Button size='small' color='primary' variant='outlined' onClick={handleGetPDF} target='_blank'>Generar PDF</Button>
-                    <Button size='small' color='secondary' variant='contained' onClick={handleGenerateBalance}>Generar Balance</Button>
-                </AccordionActions>
+                {areLoans && <>
+                    <Divider />
+                    <AccordionActions className={classes.actions}>
+                        <Button size='small' color='primary' variant='outlined' onClick={handleGetPDF} target='_blank'>Generar PDF</Button>
+                        <Button size='small' color='secondary' variant='contained' onClick={handleGenerateBalance}>Generar Balance</Button>
+                    </AccordionActions>
                 </>}
             </Accordion>
-            {!addLoan && <Button fullWidth variant='contained' color='primary' style={{ margin:'8px'}} onClick={()=>setAddLoan(true)}>Agregar prestamo</Button>}
-            {addLoan && <CAddLoan setAddLoan={setAddLoan} family={family}/>}
+            {!addLoan && <Button fullWidth variant='contained' color='primary' style={{ margin: '8px' }} onClick={() => setAddLoan(true)}>Agregar prestamo</Button>}
+            {addLoan && <Stepper orientation='vertical' activeStep={activeStepAddLoan} className={classes.stepper}>
+                <Step key='create loan'>
+                    <StepLabel>Crear prestamo</StepLabel>
+                    <StepContent className={classes.stepperContent}>
+                        <CAddLoan setAddLoan={setAddLoan} setActiveStepAddLoan={setActiveStepAddLoan} family={family} />
+                    </StepContent>
+                </Step>
+                <Step key='add photo'>
+                    <StepLabel>Agregar fotos</StepLabel>
+                    <StepContent>
+                        <h6>Agregar fotos</h6>
+                        <div className={classes.actions}>
+                            <Button color='primary' variant='contained' size='small' type='submit'>Agregar</Button>
+                            <Button variant='contained' size='small' onClick={() =>{ setAddLoan(false); setActiveStepAddLoan(0)}}>Omitir</Button>
+                        </div>
+                    </StepContent>
+                </Step>
+
+            </Stepper>
+            }
         </TabPanel>
     )
 }
