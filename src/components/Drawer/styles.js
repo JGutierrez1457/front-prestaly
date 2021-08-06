@@ -33,6 +33,7 @@ export default makeStyles((theme)=>({
     avatarOpen : {
         width : theme.spacing(8),
         height : theme.spacing(8),
+        borderRadius : 0,
         transition : theme.transitions.create(['width', 'height'],{
             easing : theme.transitions.easing.sharp,
             duration : theme.transitions.duration.enteringScreen
@@ -45,6 +46,7 @@ export default makeStyles((theme)=>({
         }),
         width : theme.spacing(5),
         height : theme.spacing(5),
+        borderRadius : 0
     }, 
     paper: {
         background : "#A43232"
