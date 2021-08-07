@@ -68,11 +68,12 @@ function AddLoan({setAddLoan, setActiveStepAddLoan, handleCreateLoan, members, i
         if(error){setLoadingBack(false);return;}
         
         try {
-            const message = await handleCreateLoan(idfamily, loan)
+            const {message, loan : idloan} = await handleCreateLoan(idfamily, loan)
             handleNotifyVariant('success', message);
             setLoadingBack(false)
+            console.log(idloan)
+            setAddLoan({ id : idloan, bool : true});
             setActiveStepAddLoan( prevstate => prevstate + 1);
-            /* setAddLoan(false); */
         } catch (error) {
             if (error.status === 400) {
                 setLoadingBack(false) 
@@ -261,7 +262,7 @@ function AddLoan({setAddLoan, setActiveStepAddLoan, handleCreateLoan, members, i
                     </div>
             <div className={classes.buttons}>
                 <Button color='primary' variant='contained' size='small' type='submit'>Agregar</Button>
-                <Button color='secondary' variant='contained' size='small' onClick={()=>setAddLoan(false)}>Cancelar</Button>
+                <Button color='secondary' variant='contained' size='small' onClick={()=>setAddLoan({id : null, bool: false})}>Cancelar</Button>
             </div>
                 </form>
         </Paper>

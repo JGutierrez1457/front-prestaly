@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import ListLoans from '../../components/Loans/ListLoans/ListLoans'
+import ListLoans from '../../components/ListLoans/ListLoans'
 import { getNoBalancedsFamily, updateLoan } from '../../actions/families'
 
 const mapStateToProps = (state, ownProps)=>{

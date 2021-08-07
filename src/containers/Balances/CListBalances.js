@@ -1,5 +1,5 @@
 import { connect } from 'react-redux'
-import ListBalances from '../../components/Balances/ListBalances/ListBalances'
+import ListBalances from '../../components/ListBalances/ListBalances'
 import { getBalancesFamily } from '../../actions/families'
 
 const mapStateToProps = (state, ownProps)=>{

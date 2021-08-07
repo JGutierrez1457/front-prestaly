@@ -1,8 +1,8 @@
-import { IconButton, Typography } from '@material-ui/core'
+import { Button, Grid, GridList, GridListTile, IconButton, MobileStepper, Typography } from '@material-ui/core'
 import React, { useState } from 'react'
 import useStyle from './styles';
 import dateFormat from 'dateformat';
-import { Edit as EditIcon } from '@material-ui/icons';
+import { Edit as EditIcon, KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
 import FormLoan from '../FormLoan/FormLoan';
 
 
@@ -15,12 +15,19 @@ function Balance({ family, _id, subject, creator, quantity, spenders, beneficiar
     const [dataLoan, setDataLoan] = useState({
         date: dateFormat(dateLoan, "yyyy-mm-dd"), subject, quantity, spenders, beneficiaries, own_products, exclude_products
     })
+    const [activeStepImages, setActiveStepImages ] = useState(0);
     
     const handleEdit = () => {
         setEdit(!edit)
         if (edit) {
             setDataLoan({ date: dateFormat(dateLoan, "yyyy-mm-dd"), subject, quantity, spenders, beneficiaries, own_products, exclude_products })
         }
+    }
+    const handleNextImage = ()=>{
+        setActiveStepImages((prevState)=>prevState + 1)
+    }
+    const handleBackImage = ()=>{
+        setActiveStepImages((prevState)=>prevState - 1)
     }
     
     
@@ -32,7 +39,9 @@ function Balance({ family, _id, subject, creator, quantity, spenders, beneficiar
                     <EditIcon />
                 </IconButton>
             </div>
-            {!edit && <>
+            {!edit && 
+            <div className={classes.loanContainer}>
+            <div style={{width:'auto'}}>
                 <Typography variant='body2'><b>Fecha:</b> {dateFormat(dateLoan, 'dd/mm/yyyy')}</Typography>
                 <Typography variant='body2' ><b>Asunto:</b> {subject}</Typography>
                 <Typography variant='body2' ><b>Gasto Total:</b> s/{quantity}</Typography>
@@ -43,7 +52,33 @@ function Balance({ family, _id, subject, creator, quantity, spenders, beneficiar
                 <div className={classes.containerLoans}>
                     {sub_balance.map((b, index) => (<div className={classes.subBalance} key={index}><b>{b.username} : </b><b style={{ color: b.amount < 0 ? '#f44336' : '#3f51b5', }}>{((b.amount < 0) ? ('-s/') : ('s/')) + Math.abs(b.amount)}</b></div>))}
                 </div>
-            </>}
+            </div>
+            { !!images.length && <div className={classes.containerImages}>
+                <div className={classes.containerImage}>
+                <img src={images[activeStepImages].url} alt={images[activeStepImages].name} className={classes.image}/>
+                </div>
+                <MobileStepper
+                    steps={images.length}
+                    position='static'
+                    variant='text'
+                    activeStep={activeStepImages}
+                    nextButton={
+                        <Button size='small' onClick={handleNextImage} disabled={activeStepImages === images.length - 1 }>
+                                Siguiente
+                                <KeyboardArrowRight />
+                        </Button>
+                    }
+                    backButton={
+                        <Button size='small' onClick={handleBackImage} disabled={activeStepImages === 0 }>
+                                <KeyboardArrowLeft />
+                                Anterior
+                        </Button>
+                    }
+                >
+
+                </MobileStepper>
+            </div>}
+            </div>}
             {edit &&
                 <FormLoan family={family} dateLoan={dateLoan} dataLoan={dataLoan} handleUpdateLoan={handleUpdateLoan} _id={_id} setEdit={setEdit} setDataLoan={setDataLoan}  subject quantity spenders beneficiaries own_products exclude_products/>}
         </div>

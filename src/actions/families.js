@@ -1,4 +1,4 @@
-import { GET_MEMBERS_BY_FAMILY, EDIT_MEMBERS, EDIT_ADMINS, EDIT_CREATOR, GET_BALANCES_BY_FAMILY, GET_NO_BALANCEDS_BY_FAMILY, GENERATE_BALANCE_BY_FAMILY, EDIT_LOAN, ADD_LOAN} from '../constants/actionsTypes'
+import { GET_MEMBERS_BY_FAMILY, EDIT_MEMBERS, EDIT_ADMINS, EDIT_CREATOR, GET_BALANCES_BY_FAMILY, GET_NO_BALANCEDS_BY_FAMILY, GENERATE_BALANCE_BY_FAMILY, EDIT_LOAN, ADD_LOAN, POST_IMAGE} from '../constants/actionsTypes'
 import * as API from '../api'
 export const getMembersFamily = (cancel, idfamily)=>async(dispatch)=>{
     try {
@@ -78,6 +78,22 @@ export const generateBalanceByFamily = (idfamily)=>async(dispatch)=>{
                 payload : []
             })
         }
+        let err = new Error(error.response.data);
+        err.status = error.response.status;
+        throw err;
+    }
+}
+export const postImageLoan = (idloan, idfamily, formData, handleProgress) => async(dispatch)=>{
+    try {
+        const { data } = await API.postImage(idloan, idfamily, formData, handleProgress);
+        const message = data.message;
+        delete data.message;
+        dispatch({
+            type : POST_IMAGE,
+            payload : data
+        })
+        return {message, url : data.image.url};
+    } catch (error) {
         let err = new Error(error.response.data);
         err.status = error.response.status;
         throw err;
@@ -191,7 +207,7 @@ export const addLoan = (idfamily, dataLoan)=>async(dispatch)=>{
             type : ADD_LOAN,
             payload : data
         })
-        return message;
+        return {message, loan : data.loan._id};
     } catch (error) {
         let err = new Error(error.response.data);
         err.status = error.response.status;

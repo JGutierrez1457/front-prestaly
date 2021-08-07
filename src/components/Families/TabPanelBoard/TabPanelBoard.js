@@ -10,13 +10,22 @@ import { useHistory } from 'react-router-dom';
 import CListBalances from '../../../containers/Balances/CListBalances';
 import CAddLoan from '../../../containers/Loans/CAddLoan';
 import CListLoans from '../../../containers/Loans/CListLoans';
+import Upload from '../../Upload/Upload';
+import CListImages from '../../../containers/Images/CListImages';
 import useStyles from './styles'
+import fileSize from 'filesize';
+import { v4 as uuidv4 } from 'uuid'
+import { postImageLoan } from '../../../actions/families'
+import { useDispatch } from 'react-redux'
 
 function TabPanelBoard({ families, family, index, valueTab, getPDFNoBalanceds, onGenerateBalance }) {
     const [expanded, setExpanded] = useState(false);
     const [areLoans, setAreLoans] = useState(false);
-    const [addLoan, setAddLoan] = useState(false);
+    const [areMembers, setAreMembers] = useState(false);
+    const [addLoan, setAddLoan] = useState({id : null, bool :false});
+    const [filesUploaded, setFilesUploaded ] = useState([]);
     const [activeStepAddLoan, setActiveStepAddLoan] = useState(0);
+    const dispatch = useDispatch();
     const history = useHistory();
     const handleExpandPanels = (panel) => (e, isExpanded) => {
         setExpanded(isExpanded ? panel : false);
@@ -24,6 +33,8 @@ function TabPanelBoard({ families, family, index, valueTab, getPDFNoBalanceds, o
     useEffect(() => {
         if (family.no_balanceds && family.no_balanceds.length !== 0) setAreLoans(true)
         if (family.no_balanceds && family.no_balanceds.length === 0) setAreLoans(false)
+        if (family.members && family.members.length !== 0) setAreMembers(true)
+        if (family.members && family.members.length === 0) setAreMembers(false)
     }, [family]);
     const idFamily = family._id;
     const classes = useStyles();
@@ -39,11 +50,56 @@ function TabPanelBoard({ families, family, index, valueTab, getPDFNoBalanceds, o
     const handleGenerateBalance = async () => {
         try {
             const res = await onGenerateBalance(family._id);
-            console.log(res)
             history.push('/board')
         } catch (error) {
             console.log(error)
         }
+    }
+    const uploadImage = async(idloan, idfamily, data, handleProgress)=>dispatch(postImageLoan(idloan, idfamily, data, handleProgress));
+    
+    const handleUploadImage = async(files)=>{
+        const uploadFiles = files.map((f) =>({
+            file: f,
+            id : uuidv4(),
+            name : f.name,
+            readableSize : fileSize(f.size),
+            preview : URL.createObjectURL(f),
+            progress : 0,
+            uploaded : false,
+            error : false,
+            url : null
+        }));
+        setFilesUploaded([...filesUploaded,...uploadFiles])
+
+        for( let uploadedFile of uploadFiles){
+            const data = new FormData();
+            data.append('file', uploadedFile.file, uploadedFile.name);
+                uploadImage(addLoan.id, family._id, data, e=>{
+                    const progress = parseInt(Math.round((e.loaded * 100) / e.total));
+                    updateFile(uploadedFile.id, { progress})
+                }).then( res=>{
+                    updateFile(uploadedFile.id, {
+                        uploaded : true,
+                        url : res.url
+                    })
+
+                }).catch(()=>{
+                    updateFile(uploadedFile.id, { error : true})
+                })
+      
+            
+        }
+
+    }
+    const updateFile = (id, data)=>{
+        let files;
+        setFilesUploaded(state=>{
+            files = state;
+            return state
+        })
+        setFilesUploaded( files.map( fu =>{
+            return fu.id === id?{...fu, ...data}:fu
+                   }))
     }
     return (
         <TabPanel
@@ -84,8 +140,8 @@ function TabPanelBoard({ families, family, index, valueTab, getPDFNoBalanceds, o
                     </AccordionActions>
                 </>}
             </Accordion>
-            {!addLoan && <Button fullWidth variant='contained' color='primary' style={{ margin: '8px' }} onClick={() => setAddLoan(true)}>Agregar prestamo</Button>}
-            {addLoan && <Stepper orientation='vertical' activeStep={activeStepAddLoan} className={classes.stepper}>
+            {(!addLoan.bool && areMembers) && <Button fullWidth variant='contained' color='primary' style={{ margin: '8px' }} onClick={() => setAddLoan({id : null, bool: true})}>Agregar prestamo</Button>}
+            {addLoan.bool && <Stepper orientation='vertical' activeStep={activeStepAddLoan} className={classes.stepper}>
                 <Step key='create loan'>
                     <StepLabel>Crear prestamo</StepLabel>
                     <StepContent className={classes.stepperContent}>
@@ -95,10 +151,10 @@ function TabPanelBoard({ families, family, index, valueTab, getPDFNoBalanceds, o
                 <Step key='add photo'>
                     <StepLabel>Agregar fotos</StepLabel>
                     <StepContent>
-                        <h6>Agregar fotos</h6>
+                        <Upload handleUploadImage={handleUploadImage} />
+                        { !!filesUploaded.length && <CListImages files={filesUploaded} /> }
                         <div className={classes.actions}>
-                            <Button color='primary' variant='contained' size='small' type='submit'>Agregar</Button>
-                            <Button variant='contained' size='small' onClick={() =>{ setAddLoan(false); setActiveStepAddLoan(0)}}>Omitir</Button>
+                        <Button variant='contained' size='small' color={!!filesUploaded.length?'primary':'default'} onClick={() =>{ setAddLoan(false); setActiveStepAddLoan(0); setFilesUploaded([])}}>{!!filesUploaded.length?'Finalizar':'Omitir'}</Button>
                         </div>
                     </StepContent>
                 </Step>

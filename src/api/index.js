@@ -15,6 +15,7 @@ export const getNoBalanceds = (cancel, idfamily) =>API.get(`/api/loans/no/balanc
 export const getPDFNoBalanceds = (idfamily) => API.get(`/api/loans/no/balanced/families/${idfamily}/pdf`,{ responseType: 'blob'});
 
 export const generateBalance = (idfamily)=> API.post(`api/balances/families/${idfamily}`);
+export const postImage = (idloan, idfamily, data, handleProgress)=> API.post(`api/loans/${idloan}/families/${idfamily}/image`,data, { onUploadProgress: handleProgress});
 
 export const addMember = (idfamily,username)=>API.patch(`/api/families/${idfamily}/members/${username}/add`)
 export const removeMember = (idfamily,username)=>API.patch(`/api/families/${idfamily}/members/${username}/delete`)

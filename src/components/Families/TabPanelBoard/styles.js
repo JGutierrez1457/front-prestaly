@@ -21,7 +21,8 @@ export default makeStyles((theme)=>({
     },
     actions : {
         display : 'flex',
-        justifyContent : 'space-evenly'
+        justifyContent : 'space-evenly',
+        marginTop : theme.spacing(2)
     },
     stepper : {
         padding : theme.spacing(3,0 )

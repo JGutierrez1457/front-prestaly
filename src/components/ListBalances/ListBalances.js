@@ -1,6 +1,6 @@
 import React,{ useEffect} from 'react'
 import axios from 'axios'
-import Balance from '../../Balance/Balance';
+import Balance from '../Balance/Balance';
 import { CircularProgress } from '@material-ui/core';
 import useStyle  from './styles'
 

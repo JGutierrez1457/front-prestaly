@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import axios from 'axios'
-import Loan from '../../Loan/Loan'
+import Loan from '../Loan/Loan'
 import { Accordion, AccordionDetails, AccordionSummary, CircularProgress } from '@material-ui/core';
 import useStyle from './styles'
 import { useState } from 'react';
