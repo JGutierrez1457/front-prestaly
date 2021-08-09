@@ -17,6 +17,8 @@ export const getPDFNoBalanceds = (idfamily) => API.get(`/api/loans/no/balanced/f
 export const generateBalance = (idfamily)=> API.post(`api/balances/families/${idfamily}`);
 export const postImage = (idloan, idfamily, data, handleProgress)=> API.post(`api/loans/${idloan}/families/${idfamily}/image`,data, { onUploadProgress: handleProgress});
 
+export const deleteImage = (idloan, idfamily, idimage)=> API.delete(`api/loans/${idloan}/families/${idfamily}/image/${idimage}`);
+
 export const addMember = (idfamily,username)=>API.patch(`/api/families/${idfamily}/members/${username}/add`)
 export const removeMember = (idfamily,username)=>API.patch(`/api/families/${idfamily}/members/${username}/delete`)
 export const addAdmin = (idfamily,username)=>API.patch(`/api/families/${idfamily}/admins/${username}/add`)

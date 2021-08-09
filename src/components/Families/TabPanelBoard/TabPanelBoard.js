@@ -15,7 +15,7 @@ import CListImages from '../../../containers/Images/CListImages';
 import useStyles from './styles'
 import fileSize from 'filesize';
 import { v4 as uuidv4 } from 'uuid'
-import { postImageLoan } from '../../../actions/families'
+import { deleteImageLoan, postImageLoan } from '../../../actions/families'
 import { useDispatch } from 'react-redux'
 
 function TabPanelBoard({ families, family, index, valueTab, getPDFNoBalanceds, onGenerateBalance }) {
@@ -49,7 +49,7 @@ function TabPanelBoard({ families, family, index, valueTab, getPDFNoBalanceds, o
     }
     const handleGenerateBalance = async () => {
         try {
-            const res = await onGenerateBalance(family._id);
+            await onGenerateBalance(family._id);
             history.push('/board')
         } catch (error) {
             console.log(error)
@@ -80,7 +80,8 @@ function TabPanelBoard({ families, family, index, valueTab, getPDFNoBalanceds, o
                 }).then( res=>{
                     updateFile(uploadedFile.id, {
                         uploaded : true,
-                        url : res.url
+                        url : res.url,
+                        id: res.idimage
                     })
 
                 }).catch(()=>{
@@ -101,6 +102,12 @@ function TabPanelBoard({ families, family, index, valueTab, getPDFNoBalanceds, o
             return fu.id === id?{...fu, ...data}:fu
                    }))
     }
+    const deleteImage = async(idloan, idfamily, idimage)=>dispatch(deleteImageLoan(idloan, idfamily, idimage));
+
+    const handleDelete = async (idloan, idfamily, idimage) => {
+        setFilesUploaded( filesUploaded.filter( file => file.id !== idimage))
+        await deleteImage(idloan, idfamily, idimage);
+      };
     return (
         <TabPanel
             value={valueTab}
@@ -152,7 +159,7 @@ function TabPanelBoard({ families, family, index, valueTab, getPDFNoBalanceds, o
                     <StepLabel>Agregar fotos</StepLabel>
                     <StepContent>
                         <Upload handleUploadImage={handleUploadImage} />
-                        { !!filesUploaded.length && <CListImages files={filesUploaded} /> }
+                        { !!filesUploaded.length && <CListImages files={filesUploaded} idloan={addLoan.id} idfamily={family._id} handleDelete={handleDelete}/> }
                         <div className={classes.actions}>
                         <Button variant='contained' size='small' color={!!filesUploaded.length?'primary':'default'} onClick={() =>{ setAddLoan(false); setActiveStepAddLoan(0); setFilesUploaded([])}}>{!!filesUploaded.length?'Finalizar':'Omitir'}</Button>
                         </div>

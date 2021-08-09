@@ -5,7 +5,7 @@ export default makeStyles((theme)=>({
         flexDirection : 'column',
         marginTop : theme.spacing(2),
         [theme.breakpoints.up('sm')]:{
-            width : '50%',
+            minWidth : '50%',
             margin : '16px auto'
         }
     },
@@ -20,7 +20,10 @@ export default makeStyles((theme)=>({
     },
     imagePreview:{
         display : 'flex',
-        alignItems : 'center'
+        alignItems : 'center',
+        [theme.breakpoints.down('xs')]:{
+            width : '135px'
+        }
     },
     image :{
         width : '36px',
@@ -31,12 +34,22 @@ export default makeStyles((theme)=>({
     imgInfo : {
         display : 'flex',
         flexDirection : 'column',
+        width:'100%',
         '& button':{
             border : 0,
             background : 'transparent',
             cursor : 'pointer',
             color : 'GrayText'
+        },
+        [theme.breakpoints.down('xs')]:{
+            width : '91px'
         }
+    },
+    imgName:{
+        width:'100%',
+        overflow:'hidden',
+        whiteSpace:'nowrap',
+        textOverflow: 'ellipsis'
     },
     fileStatus:{
         display	: 'flex',

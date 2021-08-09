@@ -71,7 +71,6 @@ function AddLoan({setAddLoan, setActiveStepAddLoan, handleCreateLoan, members, i
             const {message, loan : idloan} = await handleCreateLoan(idfamily, loan)
             handleNotifyVariant('success', message);
             setLoadingBack(false)
-            console.log(idloan)
             setAddLoan({ id : idloan, bool : true});
             setActiveStepAddLoan( prevstate => prevstate + 1);
         } catch (error) {

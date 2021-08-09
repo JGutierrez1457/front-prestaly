@@ -33,6 +33,12 @@ loanContainer:{
         flexDirection : 'column'
     }
 },
+stepper : {
+    padding : theme.spacing(3,0 )
+},
+stepperContent : {
+    padding : theme.spacing(1,1 )
+},
 image :{
     maxWidth : '300px',
     maxHeight : '200px',
@@ -64,5 +70,10 @@ containerImage:{
     background : 'black',
     display : 'flex',
     alignItems : 'center'
+},
+actions : {
+    display : 'flex',
+    justifyContent : 'space-evenly',
+    marginTop : theme.spacing(2)
 }
 }))

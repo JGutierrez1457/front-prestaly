@@ -3,13 +3,12 @@ import { Autocomplete } from '@material-ui/lab';
 import {Button, TextField, Typography, IconButton, Backdrop, CircularProgress } from '@material-ui/core'
 import { AddBox as AddBoxIcon, Delete as DeleteIcon } from '@material-ui/icons';
 import { useSnackbar } from 'notistack'
-import dateFormat from 'dateformat';
 import useStyle from './styles';
 import NumberFormat from 'react-number-format'
 
 
 
-function FormLoan({family, dataLoan, handleUpdateLoan, _id, setEdit, setDataLoan, dateLoan,  subject, quantity, spenders, beneficiaries, own_products, exclude_products}) {
+function FormLoan({family, dataLoan, handleUpdateLoan,setActiveStepEditLoan, _id, setDataLoan, dateLoan,  subject, quantity, spenders, beneficiaries, own_products, exclude_products}) {
 
     const classes = useStyle();
     const { enqueueSnackbar } = useSnackbar();
@@ -59,7 +58,7 @@ function FormLoan({family, dataLoan, handleUpdateLoan, _id, setEdit, setDataLoan
         try {
             const message = await handleUpdateLoan(_id, family._id, dataLoan);
             handleNotifyVariant('success', message);
-            setEdit(false);
+            setActiveStepEditLoan(prevState => prevState + 1)
         } catch (error) {
             if (error.status === 400) {
                 handleNotifyVariant('warning', error.message);
@@ -73,8 +72,8 @@ function FormLoan({family, dataLoan, handleUpdateLoan, _id, setEdit, setDataLoan
         }
     }
     const handleCancel = ()=>{
-        setDataLoan({ date: dateFormat(dateLoan, "yyyy-mm-dd"), subject, quantity, spenders, beneficiaries, own_products, exclude_products })
-        setEdit(false);
+/*         setDataLoan({ date: dateFormat(dateLoan, "yyyy-mm-dd"), subject, quantity, spenders, beneficiaries, own_products, exclude_products })
+ */        setActiveStepEditLoan(prevState => prevState + 1)
     }
     const handleChange = (e) => {
         setDataLoan({ ...dataLoan, [e.target.name]: e.target.value })
@@ -251,7 +250,7 @@ function FormLoan({family, dataLoan, handleUpdateLoan, _id, setEdit, setDataLoan
                     </div>
                     <div className={classes.containerButton}>
                     <Button size='small' variant="contained" color="primary" type='submit'>Actualizar</Button>
-                    <Button size='small' variant="contained" color="secondary" onClick={handleCancel}>Cancelar</Button>
+                    <Button size='small' variant="contained" color="default" onClick={handleCancel}>Omitir</Button>
                     </div>
                 </form>
                 </>
