@@ -1,10 +1,12 @@
-import { GET_MY_FAMILIES, EDIT_ADMINS, EDIT_MEMBERS, EDIT_CREATOR, GET_MEMBERS_BY_FAMILY, GET_BALANCES_BY_FAMILY, GET_NO_BALANCEDS_BY_FAMILY, GENERATE_BALANCE_BY_FAMILY, EDIT_LOAN, ADD_LOAN, POST_IMAGE, DELETE_IMAGE, ADD_FAMILY } from '../constants/actionsTypes';
+import { GET_MY_FAMILIES, REMOVE_FAMILY, EDIT_ADMINS, EDIT_MEMBERS, EDIT_CREATOR, GET_MEMBERS_BY_FAMILY, GET_BALANCES_BY_FAMILY, GET_NO_BALANCEDS_BY_FAMILY, GENERATE_BALANCE_BY_FAMILY, EDIT_LOAN, ADD_LOAN, POST_IMAGE, DELETE_IMAGE, ADD_FAMILY } from '../constants/actionsTypes';
 const families = ( state = JSON.parse(localStorage.getItem('token'))?.families || [], action )=>{
     switch(action.type){
         case GET_MY_FAMILIES:
             return action.payload
         case ADD_FAMILY:
             return [...state, action.payload ]
+        case REMOVE_FAMILY:
+            return state.filter( f => f._id !== action.payload._id)
         case GET_MEMBERS_BY_FAMILY:
             return state.map( f => (f._id === action.payload._id )?{ ...f, ...action.payload}:f)
         case GET_BALANCES_BY_FAMILY:

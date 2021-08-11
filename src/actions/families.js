@@ -1,4 +1,4 @@
-import { AUTH, GET_MEMBERS_BY_FAMILY, EDIT_MEMBERS, EDIT_ADMINS, EDIT_CREATOR, GET_BALANCES_BY_FAMILY, GET_NO_BALANCEDS_BY_FAMILY, GENERATE_BALANCE_BY_FAMILY, EDIT_LOAN, ADD_LOAN, POST_IMAGE, DELETE_IMAGE, ADD_FAMILY} from '../constants/actionsTypes'
+import { AUTH, GET_MEMBERS_BY_FAMILY, EDIT_MEMBERS, EDIT_ADMINS, EDIT_CREATOR, GET_BALANCES_BY_FAMILY, GET_NO_BALANCEDS_BY_FAMILY, GENERATE_BALANCE_BY_FAMILY, EDIT_LOAN, ADD_LOAN, POST_IMAGE, DELETE_IMAGE, ADD_FAMILY, REMOVE_FAMILY} from '../constants/actionsTypes'
 import * as API from '../api'
 export const getMembersFamily = (cancel, idfamily)=>async(dispatch)=>{
     try {
@@ -132,16 +132,21 @@ export const addMemberFamily = (idfamily, username)=>async(dispatch)=>{
     }
 }
 export const removeMemberFamily = (idfamily, username)=>async(dispatch)=>{
+    let familiesUser ;
+    let messageUser;
     try {
         const { data } = await API.removeMember(idfamily, username);
+        familiesUser = data.familiesUser;
+        messageUser = data.message;
         const datafamilies= await API.getMembers(null, idfamily);
 
         const message = data.message;
+        delete data.familiesUser;
         delete data.message;
-        dispatch({
+        /* dispatch({
             type : EDIT_MEMBERS,
             payload : data
-        })
+        }) */
         dispatch({
             type : GET_MEMBERS_BY_FAMILY,
             payload : datafamilies.data
@@ -154,6 +159,17 @@ export const removeMemberFamily = (idfamily, username)=>async(dispatch)=>{
         }
          return message;
     } catch (error) {
+        if(error.response.data === 'Usuario no es miembro'){
+            dispatch({
+                type : REMOVE_FAMILY,
+                payload : { _id : idfamily }
+            })
+            dispatch({
+                type : AUTH,
+                payload : { families : familiesUser }
+            })
+            return messageUser;
+        }
         let err = new Error(error.response.data);
         err.status = error.response.status;
         throw err;

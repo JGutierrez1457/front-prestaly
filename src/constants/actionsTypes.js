@@ -15,6 +15,7 @@ export const EDIT_CREATOR = 'EDIT_CREATOR';
 export const EDIT_LOAN = 'EDIT_LOAN';
 export const ADD_LOAN = 'ADD_LOAN';
 export const ADD_FAMILY = 'ADD_FAMILY';
+export const REMOVE_FAMILY = 'REMOVE_FAMILY';
 
 export const AUTH = 'AUTH';
 export const LOGOUT = 'LOGOUT';

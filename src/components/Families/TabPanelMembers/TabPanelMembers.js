@@ -15,18 +15,18 @@ function TabPanelMembers({ families, family, index,handleGetMembersFamily, handl
     const history = useHistory();
     const user = useSelector(state => state.auth.user.username);
    
-    const originalAdmins = Array.from(family.admins?.map(admin => admin.username) || [])
-    const originalMembers = Array.from(family.members?.map(member => member.username) || [])
-    const creator = family.creator?.username;
-    const idFamily = family._id;
+    const originalAdmins = Array.from(family?.admins?.map(admin => admin.username) || [])
+    const originalMembers = Array.from(family?.members?.map(member => member.username) || [])
+    const creator = family?.creator?.username;
+    const idFamily = family?._id;
 
     const { enqueueSnackbar } = useSnackbar();
 
     const [loadingMembers, setLoadingMembers] = useState(false);
     const [loadingBack, setLoadingBack] = useState(false);
     const [changed, setChanged] = useState(false)
-    const [admins, setAdmins] = useState(family.admins?.map(admin => admin.username) || []);
-    const [members, setMembers] = useState(family.members?.map(member => member.username) || []);
+    const [admins, setAdmins] = useState(family?.admins?.map(admin => admin.username) || []);
+    const [members, setMembers] = useState(family?.members?.map(member => member.username) || []);
     const [trashMembers, setTrashMembers] = useState([]);
     const [newMember, setNewMember] = useState('');
     const [showDroppTrash, setShowDroppTrash] = useState(false);
@@ -56,8 +56,8 @@ function TabPanelMembers({ families, family, index,handleGetMembersFamily, handl
 
     }, [admins, members, trashMembers, originalAdmins, originalMembers, family])
     useEffect(() => {
-        setAdmins(family.admins?.map(admin => admin.username) || []);
-        setMembers(family.members?.map(member => member.username) || [])
+        setAdmins(family?.admins?.map(admin => admin.username) || []);
+        setMembers(family?.members?.map(member => member.username) || [])
     }, [family, loadingMembers])
     const handleNotifyVariant = (variant, message) => {
         enqueueSnackbar(message, { variant })

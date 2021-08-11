@@ -18,7 +18,7 @@ function ListFamilies({ families, children}) {
     }
     return (
         <Drawer >
-                {(families.length === 0)?(
+                {(families?.length === 0)?(
                     <>
                     <Typography variant='h6'>No tienes familias</Typography>
                     { !createFamily && <Button startIcon={<GroupAdd />} variant='contained' color ='primary' onClick={()=>setCreateFamily(true)}>Crear familia</Button>}
@@ -34,11 +34,11 @@ function ListFamilies({ families, children}) {
                     arial-label="Tabs Families"
                     className={classes.tabs}
                 >
-                    {families.map((family, index) => {
+                    {families?.map((family, index) => {
                         return <Tab label={family.name} key={index} {...a11yProps(index, xs)} />
                     })}
                 </Tabs>
-                {families.map((family, index) => {
+                {families?.map((family, index) => {
                         return cloneElement(children, {
                             key : index,
                             valueTab,
