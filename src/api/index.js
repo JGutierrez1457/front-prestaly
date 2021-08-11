@@ -29,3 +29,4 @@ export const updateLoan = (idloan, idfamily, data)=>API.patch(`/api/loans/${idlo
 export const addLoan = (idfamily, data)=>API.post(`/api/loans/families/${idfamily}`,data)
 
 export const signIn = (data)=>API.post('/api/auth/signin',data);
+export const signUp = (data)=>API.post('/api/auth/signup',data);

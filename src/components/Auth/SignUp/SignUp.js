@@ -1,18 +1,18 @@
-import { Button, Paper, TextField, Typography, Grid, IconButton } from '@material-ui/core';
-import { AccountCircle, VpnKey, Visibility, VisibilityOff } from '@material-ui/icons';
-import React, { useState, useEffect } from 'react'
-import { Link, useHistory } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
 import useStyles from './styles'
+import { Paper, Typography, TextField, Button, IconButton, Grid } from '@material-ui/core'
+import { Link } from 'react-router-dom';
 import { useSnackbar } from 'notistack'
+import { AccountCircle, AlternateEmail, Contacts, Visibility,VisibilityOff, VpnKey } from '@material-ui/icons';
 
-
-function SignIn({ handleLogin }) {
-    const history = useHistory();
+function SignUp({handleSignUp}) {
     const classes = useStyles();
-    const { enqueueSnackbar } = useSnackbar();
+    const [userData, setUserData] = useState({ username: '', first_name: '', last_name: '', email: '', password: '', confirmPassword: '' });
+    const [ errUserInUse, setErrUserInUser ] = useState(false);
+    const [ errPassDontMatch, setErrPassDontMatch ] = useState(false);
     const [showPass, setShowPass] = useState(false);
+    const { enqueueSnackbar } = useSnackbar();
 
-    const [userData, setUserData] = useState({ username: '', password: '' });
     useEffect(() => () => {
         document.body.style.backgroundImage = null;
         document.body.style.backgroundColor = null;
@@ -25,34 +25,39 @@ function SignIn({ handleLogin }) {
         document.body.style.backgroundAttachment = 'fixed'
         document.body.style.backgroundSize = 'cover'
     }, [])
+    const handleChange = (e) => {
+        setUserData({ ...userData, [e.target.name]: e.target.value })
+        if(e.target.name === 'username')setErrUserInUser(false);
+        if(e.target.name === 'confirmPassword' || e.target.name === 'password' )setErrPassDontMatch(false);
+    }
     const handleNotifyVariant = (variant, message) => {
         enqueueSnackbar(message, { variant })
     }
-    const onLogin = async (e) => {
+    const onSignUp = async (e) => {
         e.preventDefault();
-        try {
-            const resLogin = await handleLogin(userData)
-            handleNotifyVariant('success', resLogin)
-        } catch (error) {
+        try{
+            const resSignUp = await handleSignUp(userData);
+            handleNotifyVariant('success', resSignUp);
+        }catch(error){
             if (error.status === 400) {
+                if(error.message === 'Nombre de usuario en uso'){
+                    setErrUserInUser(true)
+                }
+                if(error.message === 'Las contraseñas no coinciden'){
+                    setErrPassDontMatch(true)
+                }
                 handleNotifyVariant('warning', error.message);
             }
-            if (error.status === 404) {
-                handleNotifyVariant('error', error.message);
-            }
         }
-    }
-    const handleChange = (e) => {
-        setUserData({ ...userData, [e.target.name]: e.target.value })
     }
     return (
         <div className={classes.containerPaper}>
             <Link to='/'>
-                <img src={process.env.PUBLIC_URL + '/prestalyname.png'} alt='Prestaly Name' />
+            <img src={process.env.PUBLIC_URL+'/prestalyname.png'} alt='Prestaly Name'/>
             </Link>
             <Paper className={classes.paper}>
-                <Typography variant='h6' align='center'>Ingresar</Typography>
-                <form onSubmit={onLogin}>
+                <Typography variant='h6' align='center'>Registrarse</Typography>
+                <form>
                     <Grid container spacing={1} alignItems='flex-end'>
                         <Grid item>
                             <AccountCircle />
@@ -65,34 +70,85 @@ function SignIn({ handleLogin }) {
                                 required
                                 autoFocus
                                 onChange={handleChange}
+                                error={errUserInUse}
                             />
+                        </Grid>
+                    </Grid>
+                    <Grid container spacing={1} alignItems='flex-end' className={classes.infoName}>
+                        <Grid item>
+                            <Contacts />
+                        </Grid>
+                        <Grid container item spacing={2}>
+                            <Grid item>
+                                <TextField
+                                    name='first_name'
+                                    label='Nombre(s)'
+                                    type='text'
+                                    required
+                                    onChange={handleChange}
+                                />
+                            </Grid>
+                            <Grid item>
+                                <TextField
+                                    name='last_name'
+                                    label='Apellido(s)'
+                                    type='text'
+                                    onChange={handleChange}
+                                />
+                            </Grid>
                         </Grid>
                     </Grid>
                     <Grid container spacing={1} alignItems='flex-end'>
                         <Grid item>
-                            <VpnKey />
+                            <AlternateEmail />
                         </Grid>
                         <Grid item>
                             <TextField
-                                name='password'
-                                label='Contraseña'
-                                type={showPass ? 'text' : 'password'}
-                                required
+                                name='email'
+                                label='Correo (opcional)'
+                                type='email'
                                 onChange={handleChange}
                             />
                         </Grid>
+                    </Grid>
+                    <Grid container spacing={1} alignItems='flex-end' className={classes.password}>
+                        <Grid item>
+                            <VpnKey />
+                        </Grid>
+                        <Grid container item spacing={2}>
+                            <Grid item>
+                                <TextField
+                                    name='password'
+                                    label='Contraseña'
+                                    type={showPass ? 'text' : 'password'}
+                                    required
+                                    onChange={handleChange}
+                                />
+                            </Grid>
+                            <Grid item>
+                                <TextField
+                                    name='confirmPassword'
+                                    label='Confirme su contraseña'
+                                    type={showPass ? 'text' : 'password'}
+                                    required
+                                    error={errPassDontMatch}
+                                    onChange={handleChange}
+                                />
+                            </Grid>
+                        </Grid>
                         <Grid item>
                             <IconButton onClick={() => setShowPass(prevState => !prevState)}>
-                                {showPass?<VisibilityOff />:<Visibility />}
+                                {showPass?<VisibilityOff/>:<Visibility />}
                             </IconButton>
                         </Grid>
                     </Grid>
-                    <Button size='small' color='primary' variant='contained' type='submit'>Ingresar</Button>
+
+                    <Button variant='contained' size='small' onClick={onSignUp} type='submit'>Registrar</Button>
                 </form>
-                <Typography variant='body2'>Si no se encuentra registrado, puede hacerlo desde aquí <Link to='/signup'>registrarse</Link></Typography>
+                <Typography variant='body2'>Si ya está registrado ingrese desde aquí <Link to='/login'>ingresar</Link></Typography>
             </Paper>
         </div>
     )
 }
 
-export default SignIn
+export default SignUp

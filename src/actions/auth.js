@@ -14,6 +14,27 @@ export const signin = (dataUser)=>async(dispatch)=>{
         })
         return message;
     } catch (error) {
-        return error.response.data?.message;
+        let err = new Error(error.response.data);
+        err.status = error.response.status;
+        throw err;
     }
+}
+export const signup = (dataUser)=>async(dispatch)=>{
+    try {
+        const { data } = await API.signUp(dataUser);
+        const { user, families, token, message } = data;
+        dispatch({
+            type : GET_MY_FAMILIES,
+            payload : families
+        })
+        dispatch({
+            type : AUTH,
+            payload : { user, token, families }
+        })
+        return message;
+    } catch (error) {
+        let err = new Error(error.response.data);
+        err.status = error.response.status;
+        throw err;
+        }
 }

@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles'
 export default makeStyles((theme) => ({
     imagePrestaly: {
         display: 'block',
-        margin: '16px auto'
+        margin: '80px auto'
     },
     buttons: {
         width: '300px',

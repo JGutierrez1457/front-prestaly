@@ -1,6 +1,7 @@
 import { Route, BrowserRouter as Router, Switch, Redirect } from 'react-router-dom';
 import Home from "./components/Home/Home";
 import CSignIn from "./containers/Auth/CSignIn";
+import CSignUp from "./containers/Auth/CSignUp";
 import { useSelector } from 'react-redux';
 import ListFamilies from './components/Families/ListFamilies/ListFamilies';
 import CTabPanelMembers from './containers/Families/CTabPanelMembers';
@@ -21,6 +22,10 @@ function App() {
           <Route path='/login' render={props => {
            if (auth) { return <Redirect to={{ pathname: '/families', state: { from: '/' } }} /> }
             return <CSignIn {...props} />
+            }} />
+          <Route path='/signup' render={props => {
+           if (auth) { return <Redirect to={{ pathname: '/families', state: { from: '/' } }} /> }
+            return <CSignUp {...props} />
             }} />
           <PrivateRoute path='/families'>
             <ListFamilies families={families}>
