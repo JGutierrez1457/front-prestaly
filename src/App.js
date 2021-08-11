@@ -6,6 +6,7 @@ import { useSelector } from 'react-redux';
 import ListFamilies from './components/Families/ListFamilies/ListFamilies';
 import CTabPanelMembers from './containers/Families/CTabPanelMembers';
 import CTabPanelBoard from './containers/Families/CTabPanelBoard';
+import { Typography } from '@material-ui/core';
  var auth;
  var families;
 function App() {
@@ -28,15 +29,21 @@ function App() {
             return <CSignUp {...props} />
             }} />
           <PrivateRoute path='/families'>
+            <>
+            <Typography variant='h6' align='center' style={{marginTop: '8px'}}>Familias</Typography>
             <ListFamilies families={families}>
               <CTabPanelMembers />
             </ListFamilies>
+            </>
           </PrivateRoute>
+          <>
+          <Typography variant='h6' align='center'  style={{marginTop: '8px'}}>Prestamos</Typography>
           <PrivateRoute path='/board'>
             <ListFamilies families={families}>
               <CTabPanelBoard />
             </ListFamilies>
           </PrivateRoute>
+          </>
         </Switch>
       </Router>
     </div>

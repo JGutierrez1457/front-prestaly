@@ -1,4 +1,4 @@
-import { Tabs, Tab, Typography, useMediaQuery, useTheme } from '@material-ui/core';
+import { Tabs, Tab, useMediaQuery, useTheme } from '@material-ui/core';
 import React from 'react';
 import { useState } from 'react';
 import Drawer from '../../Drawer/Drawer'
@@ -15,7 +15,6 @@ function ListFamilies({ families, children}) {
     }
     return (
         <Drawer >
-            <Typography variant='h6' align='center'>Familias</Typography>
                 {(families.length === 0)?(<Drawer><h1>No tienes familias</h1></Drawer>):(
             <div className={classes.root}>
                 <Tabs

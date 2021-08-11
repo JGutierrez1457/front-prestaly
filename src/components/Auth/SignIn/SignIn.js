@@ -1,13 +1,12 @@
 import { Button, Paper, TextField, Typography, Grid, IconButton } from '@material-ui/core';
 import { AccountCircle, VpnKey, Visibility, VisibilityOff } from '@material-ui/icons';
 import React, { useState, useEffect } from 'react'
-import { Link, useHistory } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import useStyles from './styles'
 import { useSnackbar } from 'notistack'
 
 
 function SignIn({ handleLogin }) {
-    const history = useHistory();
     const classes = useStyles();
     const { enqueueSnackbar } = useSnackbar();
     const [showPass, setShowPass] = useState(false);
