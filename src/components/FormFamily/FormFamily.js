@@ -14,6 +14,7 @@ function FormFamily({ setCreateFamily, handleAddFamily }) {
 
     const handleChange = (e) => {
         setFamily({ ...family, [e.target.name]: e.target.value })
+        if(e.target.name==='password' || e.target.name === 'confirmPassword')setErrPassDontMatch(false)
     }
     const handleNotifyVariant = (variant, message) => {
         enqueueSnackbar(message, { variant })
@@ -22,10 +23,11 @@ function FormFamily({ setCreateFamily, handleAddFamily }) {
         e.preventDefault();
         try {
             const resAddFamily = await handleAddFamily(family);
+            setCreateFamily(false);
             handleNotifyVariant('success', resAddFamily.message)
-
         } catch (error) {
             if (error.status === 400) {
+                setErrPassDontMatch(true)
                 handleNotifyVariant('warning', error.message);
             }
         }

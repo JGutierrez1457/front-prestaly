@@ -269,3 +269,25 @@ export const addFamily = (dataFamily)=>async(dispatch)=>{
     }
 
 }
+export const deleteFamily = (idfamily, password)=>async(dispatch)=>{
+    try {
+        const { data } = await API.deleteFamily(idfamily, password);
+        const { families } = data
+        const message = data.message;
+        delete data.message;
+        dispatch({
+            type : REMOVE_FAMILY,
+            payload : { _id : idfamily }
+        })
+        dispatch({
+            type : AUTH,
+            payload : { families }
+        })
+        return message;
+    } catch (error) {
+        let err = new Error(error.response.data);
+        err.status = error.response.status;
+        throw err;
+    }
+
+}
