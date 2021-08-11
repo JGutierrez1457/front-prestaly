@@ -30,14 +30,14 @@ function App() {
             }} />
           <PrivateRoute path='/families'>
             <>
-            <Typography variant='h6' align='center' style={{marginTop: '8px'}}>Familias</Typography>
+            <Typography variant='h5' align='center' style={{marginTop: '8px'}}>Familias</Typography>
             <ListFamilies families={families}>
               <CTabPanelMembers />
             </ListFamilies>
             </>
           </PrivateRoute>
           <>
-          <Typography variant='h6' align='center'  style={{marginTop: '8px'}}>Prestamos</Typography>
+          <Typography variant='h5' align='center'  style={{marginTop: '8px'}}>Prestamos</Typography>
           <PrivateRoute path='/board'>
             <ListFamilies families={families}>
               <CTabPanelBoard />
