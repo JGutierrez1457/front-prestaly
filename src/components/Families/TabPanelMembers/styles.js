@@ -18,6 +18,14 @@ export default makeStyles((theme)=>({
             maxWidth : '250px'
         }
     },
+    deleteFamily:{
+        position : 'absolute',
+        top : theme.spacing(9),
+        right : theme.spacing(5),
+        [theme.breakpoints.down('xs')]:{
+            top : theme.spacing(14)
+        }
+    },
     listButton :{
         display : 'flex',
         flexDirection : 'row',
@@ -36,7 +44,8 @@ export default makeStyles((theme)=>({
         display : 'flex',
         alignItems : 'center',
         [theme.breakpoints.down('xs')]:{
-           flexDirection : 'column'
+           flexDirection : 'column',
+           marginTop : theme.spacing(3)
         }
     },
     containerListTrash : {

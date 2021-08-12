@@ -8,7 +8,7 @@ import dateFormat from 'dateformat';
 import { useSnackbar } from 'notistack'
 import NumberFormat from 'react-number-format'
 
-function AddLoan({setAddLoan, handleCreateLoan, members, idfamily}) {
+function AddLoan({setAddLoan, setActiveStepAddLoan, handleCreateLoan, members, idfamily}) {
     const classes = useStyles();
     const { enqueueSnackbar } = useSnackbar();
     const [loadingBack, setLoadingBack] = useState(false);
@@ -68,10 +68,11 @@ function AddLoan({setAddLoan, handleCreateLoan, members, idfamily}) {
         if(error){setLoadingBack(false);return;}
         
         try {
-            const message = await handleCreateLoan(idfamily, loan)
+            const {message, loan : idloan} = await handleCreateLoan(idfamily, loan)
             handleNotifyVariant('success', message);
             setLoadingBack(false)
-            setAddLoan(false);
+            setAddLoan({ id : idloan, bool : true});
+            setActiveStepAddLoan( prevstate => prevstate + 1);
         } catch (error) {
             if (error.status === 400) {
                 setLoadingBack(false) 
@@ -260,7 +261,7 @@ function AddLoan({setAddLoan, handleCreateLoan, members, idfamily}) {
                     </div>
             <div className={classes.buttons}>
                 <Button color='primary' variant='contained' size='small' type='submit'>Agregar</Button>
-                <Button color='secondary' variant='contained' size='small' onClick={()=>setAddLoan(false)}>Cancelar</Button>
+                <Button color='secondary' variant='contained' size='small' onClick={()=>setAddLoan({id : null, bool: false})}>Cancelar</Button>
             </div>
                 </form>
         </Paper>

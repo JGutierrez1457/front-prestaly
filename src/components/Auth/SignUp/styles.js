@@ -13,12 +13,13 @@ export default makeStyles((theme)=>({
         }
     },
     paper : {
-        padding: theme.spacing(4,6),
-        margin : theme.spacing(0,40),
+        padding: theme.spacing(4,4),
+        margin : theme.spacing(0,30),
         display : 'flex',
         flexDirection : 'column',
         [theme.breakpoints.down('xs')]:{
-            margin: theme.spacing(0,7)
+            margin: theme.spacing(0,6),
+            padding : theme.spacing(2,2)
         },
         '& .MuiButton-root':{
             display : 'block',
@@ -35,5 +36,28 @@ export default makeStyles((theme)=>({
                 flexWrap : 'nowrap'
             }
         }
+    },
+    infoName:{
+        flexWrap : 'nowrap',
+        [theme.breakpoints.down('xs')]:{
+            alignItems : 'flex-start',
+            '& div:first-child svg':{
+                marginTop : theme.spacing(3)
+            }
+        }
+    },
+    password:{
+        flexWrap : 'nowrap',
+        [theme.breakpoints.down('xs')]:{
+            alignItems : 'flex-start',
+            '& div:first-child svg':{
+                marginTop : theme.spacing(3)
+            },
+            '& div:last-child button':{
+                top : theme.spacing(2),
+                padding : theme.spacing(1)
+            }
+        }
+
     }
 }))

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { List, ListItem, ListItemIcon, ListItemText, TextField, Button, Backdrop, 
-    CircularProgress, Typography, useTheme, useMediaQuery } from '@material-ui/core';
+    CircularProgress, Typography, useTheme, useMediaQuery, IconButton, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@material-ui/core';
 import { Delete as DeleteIcon, Person as PersonIcon } from '@material-ui/icons';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import { useSnackbar } from 'notistack'
@@ -9,27 +9,32 @@ import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import axios from 'axios'
 
-function TabPanelMembers({ families, family, index,handleGetMembersFamily, handleAddMember, handleRemoveMember, handleAddAdmin, handleRemoveAdmin, valueTab }) {
+
+function TabPanelMembers({ families, family, index,handleGetMembersFamily, handleAddMember, handleRemoveMember, handleAddAdmin, handleRemoveAdmin, handleDeleteFamily, valueTab }) {
 
     const classes = useStyles();
     const history = useHistory();
     const user = useSelector(state => state.auth.user.username);
-   
-    const originalAdmins = Array.from(family.admins?.map(admin => admin.username) || [])
-    const originalMembers = Array.from(family.members?.map(member => member.username) || [])
-    const creator = family.creator?.username;
-    const idFamily = family._id;
+    const theme = useTheme();
+    const xs = useMediaQuery(theme.breakpoints.down('xs'));
+    const [passFamily, setPassFamily] = useState('');
+
+    const originalAdmins = Array.from(family?.admins?.map(admin => admin.username) || [])
+    const originalMembers = Array.from(family?.members?.map(member => member.username) || [])
+    const creator = family?.creator?.username;
+    const idFamily = family?._id;
 
     const { enqueueSnackbar } = useSnackbar();
 
     const [loadingMembers, setLoadingMembers] = useState(false);
     const [loadingBack, setLoadingBack] = useState(false);
     const [changed, setChanged] = useState(false)
-    const [admins, setAdmins] = useState(family.admins?.map(admin => admin.username) || []);
-    const [members, setMembers] = useState(family.members?.map(member => member.username) || []);
+    const [admins, setAdmins] = useState(family?.admins?.map(admin => admin.username) || []);
+    const [members, setMembers] = useState(family?.members?.map(member => member.username) || []);
     const [trashMembers, setTrashMembers] = useState([]);
     const [newMember, setNewMember] = useState('');
     const [showDroppTrash, setShowDroppTrash] = useState(false);
+    const [openDeleteFamily, setOpenDeleteFamily] = useState(false);
     useEffect(() => {
         let cancel;
         const getMembers = async ()=>{
@@ -56,11 +61,30 @@ function TabPanelMembers({ families, family, index,handleGetMembersFamily, handl
 
     }, [admins, members, trashMembers, originalAdmins, originalMembers, family])
     useEffect(() => {
-        setAdmins(family.admins?.map(admin => admin.username) || []);
-        setMembers(family.members?.map(member => member.username) || [])
+        setAdmins(family?.admins?.map(admin => admin.username) || []);
+        setMembers(family?.members?.map(member => member.username) || [])
     }, [family, loadingMembers])
     const handleNotifyVariant = (variant, message) => {
         enqueueSnackbar(message, { variant })
+    }
+    const handleOpenDeleteFamily =()=>{
+        setOpenDeleteFamily(true)
+    }
+    const handleCloseDeleteFamily =()=>{
+        setPassFamily('')
+        setOpenDeleteFamily(false)
+    }
+    const onDeleteFamily =async ()=>{
+        try {
+            const resDeleteFamily = await handleDeleteFamily(family._id, passFamily );
+            handleNotifyVariant('success', resDeleteFamily)
+            handleCloseDeleteFamily();
+            history.push('/')
+        } catch (error) {
+            if (error.status === 400) {
+                handleNotifyVariant('warning', error.message);
+            }
+        }
     }
     const onClickAddMember = async (e) => {
         e.preventDefault();
@@ -242,6 +266,24 @@ function TabPanelMembers({ families, family, index,handleGetMembersFamily, handl
                 (
                     <>
                 <Typography variant='body2' style={{ fontStyle: 'italic' }} align='center' color='textSecondary'>Creador {creator}</Typography>
+                {user === creator  &&<><IconButton className={classes.deleteFamily} onClick={handleOpenDeleteFamily}>
+                    <DeleteIcon style={{ fill : '#f44336'}} />
+                </IconButton>
+                
+                <Dialog fullWidth={xs} maxWidth={xs?'xs':'sm'} open={openDeleteFamily} onClose={handleCloseDeleteFamily}>
+                    <DialogTitle>Eliminar familia</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Al eliminar la familia, eliminará todos los balances y prestamos aún no balanceados. Si está seguro, ingrese la contraseña ingresada al momento de crear la familia.
+                        </DialogContentText>
+                        <TextField autoFocus label="Contraseña de familia" type='text' value={passFamily} required onChange={(e)=>setPassFamily(e.target.value)} />
+                    </DialogContent>
+                    <DialogActions>
+                        <Button size='small' color='secondary' variant='contained' onClick={onDeleteFamily}>Eliminar</Button>
+                        <Button size='small' color='default' onClick={handleCloseDeleteFamily}>Cancelar</Button>
+                    </DialogActions>
+                </Dialog>
+                </>}
                 <DragDropContext onBeforeCapture={handleOnBeforeCapture} onDragEnd={handleOnDragEnd}>
                     <div className={classes.containerList}>
                         <Typography color='textSecondary'>Administradores</Typography>
@@ -391,8 +433,8 @@ function TabPanel(props) {
         <div
             role="tabpanel"
             hidden={value !== index}
-            id={`${xs ? 'vertical' : 'scrollable-auto'}-tabpanel-${index}`}
-            aria-labelledby={`${xs ? 'vertical' : 'scrollable-auto'}-tab-${index}`}
+            id={`${xs ? 'vertical' : 'scrollable-force'}-tabpanel-${index}`}
+            aria-labelledby={`${xs ? 'vertical' : 'scrollable-force'}-tab-${index}`}
             {...other}
         >
             {value === index && (

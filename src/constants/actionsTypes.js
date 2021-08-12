@@ -4,6 +4,9 @@ export const GET_BALANCES_BY_FAMILY = 'GET_BALANCES_BY_FAMILY';
 export const GET_NO_BALANCEDS_BY_FAMILY = 'GET_NO_BALANCEDS_BY_FAMILY';
 
 export const GENERATE_BALANCE_BY_FAMILY = 'GENERATE_BALANCE_BY_FAMILY';
+export const POST_IMAGE = 'POST_IMAGE';
+
+export const DELETE_IMAGE = 'DELETE_IMAGE';
 
 export const EDIT_MEMBERS = 'EDIT_MEMBERS';
 export const EDIT_ADMINS = 'EDIT_ADMINS';
@@ -11,6 +14,8 @@ export const EDIT_CREATOR = 'EDIT_CREATOR';
 
 export const EDIT_LOAN = 'EDIT_LOAN';
 export const ADD_LOAN = 'ADD_LOAN';
+export const ADD_FAMILY = 'ADD_FAMILY';
+export const REMOVE_FAMILY = 'REMOVE_FAMILY';
 
 export const AUTH = 'AUTH';
 export const LOGOUT = 'LOGOUT';

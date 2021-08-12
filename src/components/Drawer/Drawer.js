@@ -82,7 +82,7 @@ export default function MiDrawer({children}) {
                         [classes.containerAvatarOpen]: open,
                         [classes.containerAvatarClose]: !open
                     } )}  >
-                    <Avatar alt='PrestaLy' src={process.env.PUBLIC_URL+'/prestaly.jpg'}
+                    <Avatar alt='PrestaLy' src={process.env.PUBLIC_URL+'/prestaly.png'}
                          className={clsx({
                                 [classes.avatarOpen]: open,
                                 [classes.avatarClose]: !open
