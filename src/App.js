@@ -6,12 +6,17 @@ import { useSelector } from 'react-redux';
 import ListFamilies from './components/Families/ListFamilies/ListFamilies';
 import CTabPanelMembers from './containers/Families/CTabPanelMembers';
 import CTabPanelBoard from './containers/Families/CTabPanelBoard';
-import { Typography } from '@material-ui/core';
- var auth;
- var families;
+import { Typography, Button } from '@material-ui/core';
+import CFormFamily from './containers/Families/CFormFamily';
+import { GroupAdd } from '@material-ui/icons';
+import { useState } from 'react';
+var auth;
+var families;
 function App() {
-   auth = useSelector( state => state.auth?.token);
-   families = useSelector( state => state.auth?.families);
+  auth = useSelector(state => state.auth?.token);
+  families = useSelector(state => state.auth?.families);
+  const [createFamily, setCreateFamily] = useState(false);
+
   return (
     <div className="App">
       <Router>
@@ -21,28 +26,28 @@ function App() {
             return <Home {...props} />
           }} />
           <Route path='/login' render={props => {
-           if (auth) { return <Redirect to={{ pathname: '/families', state: { from: '/' } }} /> }
+            if (auth) { return <Redirect to={{ pathname: '/families', state: { from: '/' } }} /> }
             return <CSignIn {...props} />
-            }} />
+          }} />
           <Route path='/signup' render={props => {
-           if (auth) { return <Redirect to={{ pathname: '/families', state: { from: '/' } }} /> }
+            if (auth) { return <Redirect to={{ pathname: '/families', state: { from: '/' } }} /> }
             return <CSignUp {...props} />
-            }} />
+          }} />
           <PrivateRoute path='/families'>
             <>
-            <Typography variant='h5' align='center' style={{marginTop: '8px'}}>Familias</Typography>
-            <ListFamilies families={families}>
-              <CTabPanelMembers />
-            </ListFamilies>
+              <Typography variant='h5' align='center' style={{ marginTop: '8px' }}>Familias</Typography>
+              <ListFamilies families={families} members={true}>
+                <CTabPanelMembers />
+              </ListFamilies>
             </>
           </PrivateRoute>
           <>
-          <Typography variant='h5' align='center'  style={{marginTop: '8px'}}>Prestamos</Typography>
-          <PrivateRoute path='/board'>
-            <ListFamilies families={families}>
-              <CTabPanelBoard />
-            </ListFamilies>
-          </PrivateRoute>
+            <Typography variant='h5' align='center' style={{ marginTop: '8px' }}>Prestamos</Typography>
+            <PrivateRoute path='/board'>
+              <ListFamilies families={families}>
+                <CTabPanelBoard />
+              </ListFamilies>
+            </PrivateRoute>
           </>
         </Switch>
       </Router>

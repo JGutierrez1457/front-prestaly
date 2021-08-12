@@ -6,10 +6,14 @@ export default makeStyles((theme)=>({
         display : 'flex',
         height : 'auto',
         [theme.breakpoints.down('xs')]:{
-            flexDirection : 'column'
+            flexDirection : 'column',
+            width : '295px'
         }
     },
     tabs : {
-        borderRadius:  `1px solid ${theme.palette.divider}`
+        borderRadius:  `1px solid ${theme.palette.divider}`,
+        [theme.breakpoints.up('sm')]:{
+            height : 300
+        }
     }
 }))

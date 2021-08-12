@@ -19,7 +19,7 @@ export default makeStyles((theme)=>({
         }
     },
     deleteFamily:{
-        position : 'fixed',
+        position : 'absolute',
         top : theme.spacing(9),
         right : theme.spacing(5),
         [theme.breakpoints.down('xs')]:{
@@ -44,7 +44,8 @@ export default makeStyles((theme)=>({
         display : 'flex',
         alignItems : 'center',
         [theme.breakpoints.down('xs')]:{
-           flexDirection : 'column'
+           flexDirection : 'column',
+           marginTop : theme.spacing(3)
         }
     },
     containerListTrash : {

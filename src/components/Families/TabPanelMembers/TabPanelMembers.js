@@ -71,12 +71,15 @@ function TabPanelMembers({ families, family, index,handleGetMembersFamily, handl
         setOpenDeleteFamily(true)
     }
     const handleCloseDeleteFamily =()=>{
+        setPassFamily('')
         setOpenDeleteFamily(false)
     }
     const onDeleteFamily =async ()=>{
         try {
             const resDeleteFamily = await handleDeleteFamily(family._id, passFamily );
             handleNotifyVariant('success', resDeleteFamily)
+            handleCloseDeleteFamily();
+            history.push('/')
         } catch (error) {
             if (error.status === 400) {
                 handleNotifyVariant('warning', error.message);
@@ -430,8 +433,8 @@ function TabPanel(props) {
         <div
             role="tabpanel"
             hidden={value !== index}
-            id={`${xs ? 'vertical' : 'scrollable-auto'}-tabpanel-${index}`}
-            aria-labelledby={`${xs ? 'vertical' : 'scrollable-auto'}-tab-${index}`}
+            id={`${xs ? 'vertical' : 'scrollable-force'}-tabpanel-${index}`}
+            aria-labelledby={`${xs ? 'vertical' : 'scrollable-force'}-tab-${index}`}
             {...other}
         >
             {value === index && (
