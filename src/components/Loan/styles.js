@@ -23,7 +23,8 @@ title:{
     justifyContent : 'space-between',
     marginBottom : theme.spacing(2),
     '& .MuiIconButton-root':{
-        padding : 0
+        padding : 0,
+        marginLeft : theme.spacing(1)
     }
 },
 loanContainer:{

@@ -6,16 +6,12 @@ import { useSelector } from 'react-redux';
 import ListFamilies from './components/Families/ListFamilies/ListFamilies';
 import CTabPanelMembers from './containers/Families/CTabPanelMembers';
 import CTabPanelBoard from './containers/Families/CTabPanelBoard';
-import { Typography, Button } from '@material-ui/core';
-import CFormFamily from './containers/Families/CFormFamily';
-import { GroupAdd } from '@material-ui/icons';
-import { useState } from 'react';
+import { Typography } from '@material-ui/core';
 var auth;
 var families;
 function App() {
   auth = useSelector(state => state.auth?.token);
   families = useSelector(state => state.auth?.families);
-  const [createFamily, setCreateFamily] = useState(false);
 
   return (
     <div className="App">

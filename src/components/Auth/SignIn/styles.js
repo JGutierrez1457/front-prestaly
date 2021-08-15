@@ -14,15 +14,22 @@ export default makeStyles((theme)=>({
     },
     paper : {
         padding: theme.spacing(4,6),
-        margin : theme.spacing(0,40),
+        margin : theme.spacing(0,60),
         display : 'flex',
         flexDirection : 'column',
+        alignItems : 'center',
+        [theme.breakpoints.down('md')]:{
+            margin: theme.spacing(0,40)
+        },
+        [theme.breakpoints.down('sm')]:{
+            margin: theme.spacing(0,25)
+        },
         [theme.breakpoints.down('xs')]:{
             margin: theme.spacing(0,7)
         },
         '& .MuiButton-root':{
             display : 'block',
-            margin : '16px auto',
+            margin : '32px auto',
             backgroundColor : theme.palette.grey[900],
              color : theme.palette.getContrastText(grey[900]),
             '&:hover':{
