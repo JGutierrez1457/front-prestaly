@@ -1,4 +1,4 @@
-import { Button, Paper, TextField, Typography, Grid, IconButton } from '@material-ui/core';
+import { Button, Paper, TextField, Typography, Grid, IconButton, CircularProgress } from '@material-ui/core';
 import { AccountCircle, VpnKey, Visibility, VisibilityOff } from '@material-ui/icons';
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
@@ -10,6 +10,7 @@ function SignIn({ handleLogin }) {
     const classes = useStyles();
     const { enqueueSnackbar } = useSnackbar();
     const [showPass, setShowPass] = useState(false);
+    const [load, setLoad] = useState(false);
 
     const [userData, setUserData] = useState({ username: '', password: '' });
     useEffect(() => () => {
@@ -30,13 +31,16 @@ function SignIn({ handleLogin }) {
     const onLogin = async (e) => {
         e.preventDefault();
         try {
+            setLoad(true);
             const resLogin = await handleLogin(userData)
             handleNotifyVariant('success', resLogin)
         } catch (error) {
             if (error.status === 400) {
+                setLoad(false)
                 handleNotifyVariant('warning', error.message);
             }
             if (error.status === 404) {
+                setLoad(false)
                 handleNotifyVariant('error', error.message);
             }
         }
@@ -86,7 +90,10 @@ function SignIn({ handleLogin }) {
                             </IconButton>
                         </Grid>
                     </Grid>
-                    <Button size='small' color='primary' variant='contained' type='submit'>Ingresar</Button>
+                    <Button size='small' color='primary' variant='contained' type='submit' disabled={load}>
+                        Ingresar
+                        {load && <CircularProgress color='inherit'  style={{ height : '15px', width : '15px', marginLeft : '8px'}} />}
+                        </Button>
                 </form>
                 <Typography variant='body2'>Si no se encuentra registrado, puede hacerlo desde aquí <Link to='/signup'>registrarse</Link></Typography>
             </Paper>

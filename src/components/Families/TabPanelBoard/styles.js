@@ -29,5 +29,9 @@ export default makeStyles((theme)=>({
     },
     stepperContent : {
         padding : theme.spacing(1,0 )
+    },
+    backdrop:{
+        zIndex: theme.zIndex.drawer + 1,
+        color: '#fff',
     }
 }))

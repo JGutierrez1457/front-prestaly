@@ -2,7 +2,7 @@ import { Button, IconButton, MobileStepper, Step, StepContent, StepLabel, Steppe
 import React, { useState } from 'react'
 import useStyle from './styles';
 import dateFormat from 'dateformat';
-import { Edit as EditIcon, KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
+import { AddPhotoAlternate, Edit as EditIcon, KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
 import FormLoan from '../FormLoan/FormLoan';
 import Upload from '../Upload/Upload';
 import CListImages from '../../containers/Images/CListImages';
@@ -53,11 +53,31 @@ function Balance({ family, _id, subject, creator, quantity, spenders, beneficiar
         })))
     }
     const handleEdit = () => {
-        setEdit(!edit)
         if (edit) {
-            setActiveStepEditLoan(0);
+            if(activeStepEditLoan === 0){
+                setEdit(false);
+            }else{
+                setActiveStepEditLoan(0);
+            }
             resetFileUploaded();
             setDataLoan({ date: dateFormat(dateLoan, "yyyy-mm-dd"), subject, quantity, spenders, beneficiaries, own_products, exclude_products })
+        }else{
+            setEdit(true);
+            setActiveStepEditLoan(0)
+        }
+    }
+    const handleAddImages = () => {
+        if (edit) {
+            if(activeStepEditLoan === 1){
+                setEdit(false)
+            }else{
+                setActiveStepEditLoan(1)
+            }
+            resetFileUploaded();
+            setDataLoan({ date: dateFormat(dateLoan, "yyyy-mm-dd"), subject, quantity, spenders, beneficiaries, own_products, exclude_products })
+        } else{
+            setEdit(true)
+            setActiveStepEditLoan(1);
         }
     }
     const handleNextImage = () => {
@@ -68,17 +88,43 @@ function Balance({ family, _id, subject, creator, quantity, spenders, beneficiar
     }
 
     const uploadImage = async (files) => {
-        const uploadFiles = files.map((f) => ({
-            file: f,
-            id: uuidv4(),
-            name: f.name,
-            readableSize: fileSize(f.size),
-            preview: URL.createObjectURL(f),
-            progress: 0,
-            uploaded: false,
-            error: false,
-            url: null
-        }));
+        var uploadFiles = [];
+        for (let f of files) {
+            var file = f;
+            /*
+            if(file.type === 'image/jpeg' || f.type === 'image/jpg'){
+                 const dataArrayBuffer = await new Promise( resolve =>{
+                    const reader = new FileReader();
+                    reader.onload = ()=> resolve(reader.result);
+                    reader.readAsArrayBuffer(f)
+                })
+                const buf = Buffer.from(dataArrayBuffer);
+                const { height, width, data} = jpeg.decode(buf);
+                const { buffer } = await jo.rotate(buf, { quality : 50});            
+                var rawImageData = {
+                    data: buffer,
+                    width: width,
+                    height: height,
+                  };
+                  var jpegImageData = jpeg.encode(rawImageData, 50);
+                  console.log(jpegImageData.data)
+                  file = new File(jpegImageData.data,f.name, { type : f.type}) 
+
+            }*/
+            uploadFiles = [...uploadFiles,
+            {
+                file: file,
+                id: uuidv4(),
+                name: f.name,
+                readableSize: fileSize(f.size),
+                preview: URL.createObjectURL(file),
+                progress: 0,
+                uploaded: false,
+                error: false,
+                url: null
+            }]
+        }
+
         setFilesUploaded([...filesUploaded, ...uploadFiles])
 
         for (let uploadedFile of uploadFiles) {
@@ -120,9 +166,14 @@ function Balance({ family, _id, subject, creator, quantity, spenders, beneficiar
         <div>
             <div className={classes.title}>
                 <Typography variant='body2' style={{ fontStyle: 'italic', marginTop: '4px' }} align='center' color='textSecondary'>Creado por {creator}</Typography>
+                <div className={classes.buttonsEdit}>
                 <IconButton onClick={handleEdit}>
                     <EditIcon />
                 </IconButton>
+                <IconButton onClick={handleAddImages}>
+                    <AddPhotoAlternate />
+                </IconButton>
+                </div>
             </div>
             {!edit &&
                 <div className={classes.loanContainer}>

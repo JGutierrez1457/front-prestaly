@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import useStyles from './styles'
-import { Paper, Typography, TextField, Button, IconButton, Grid } from '@material-ui/core'
+import { Paper, Typography, TextField, Button, IconButton, Grid, CircularProgress } from '@material-ui/core'
 import { Link } from 'react-router-dom';
 import { useSnackbar } from 'notistack'
 import { AccountCircle, AlternateEmail, Contacts, Visibility,VisibilityOff, VpnKey } from '@material-ui/icons';
@@ -11,6 +11,8 @@ function SignUp({handleSignUp}) {
     const [ errUserInUse, setErrUserInUser ] = useState(false);
     const [ errPassDontMatch, setErrPassDontMatch ] = useState(false);
     const [showPass, setShowPass] = useState(false);
+    const [load, setLoad] = useState(false);
+
     const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => () => {
@@ -36,10 +38,12 @@ function SignUp({handleSignUp}) {
     const onSignUp = async (e) => {
         e.preventDefault();
         try{
+            setLoad(true);
             const resSignUp = await handleSignUp(userData);
             handleNotifyVariant('success', resSignUp);
         }catch(error){
             if (error.status === 400) {
+                setLoad(false)
                 if(error.message === 'Nombre de usuario en uso'){
                     setErrUserInUser(true)
                 }
@@ -143,7 +147,10 @@ function SignUp({handleSignUp}) {
                         </Grid>
                     </Grid>
 
-                    <Button variant='contained' size='small' onClick={onSignUp} type='submit'>Registrar</Button>
+                    <Button variant='contained' size='small' onClick={onSignUp} type='submit'>
+                        Registrar
+                        {load && <CircularProgress color='inherit'  style={{ height : '15px', width : '15px', marginLeft : '8px'}} />}
+                        </Button>
                 </form>
                 <Typography variant='body2'>Si ya está registrado ingrese desde aquí <Link to='/login'>ingresar</Link></Typography>
             </Paper>

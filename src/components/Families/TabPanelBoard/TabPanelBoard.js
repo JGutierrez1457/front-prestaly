@@ -1,6 +1,8 @@
 import {
     Typography, Accordion, AccordionSummary, AccordionDetails,
-    useTheme, useMediaQuery, Button, AccordionActions, Divider, Stepper, Step, StepLabel, StepContent
+    useTheme, useMediaQuery, Button, AccordionActions, Divider, 
+    Stepper, Step, StepLabel, StepContent, Dialog, DialogTitle, 
+    DialogActions, DialogContent ,DialogContentText, Backdrop, CircularProgress
 } from '@material-ui/core';
 import { ExpandMore as ExpandMoreIcon } from '@material-ui/icons';
 import React from 'react'
@@ -16,7 +18,9 @@ import useStyles from './styles'
 import fileSize from 'filesize';
 import { v4 as uuidv4 } from 'uuid'
 import { deleteImageLoan, postImageLoan } from '../../../actions/families'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { useSnackbar } from 'notistack'
+
 
 function TabPanelBoard({ families, family, index, valueTab, getPDFNoBalanceds, onGenerateBalance }) {
     const [expanded, setExpanded] = useState(false);
@@ -25,10 +29,21 @@ function TabPanelBoard({ families, family, index, valueTab, getPDFNoBalanceds, o
     const [addLoan, setAddLoan] = useState({id : null, bool :false});
     const [filesUploaded, setFilesUploaded ] = useState([]);
     const [activeStepAddLoan, setActiveStepAddLoan] = useState(0);
+    const [openGenBalance, setOpenGenBalance] = useState(false);
+    const [openBackDrop, setOpenBackDrop] = useState(false);
+    const { enqueueSnackbar } = useSnackbar();
+
+    const theme = useTheme()
+    const xs = useMediaQuery(theme.breakpoints.down('xs'));
     const dispatch = useDispatch();
     const history = useHistory();
+    const user = useSelector(state => state.auth.user.username);
+    const userIsAdmin = family?.admins?.some( admin => admin.username === user )
     const handleExpandPanels = (panel) => (e, isExpanded) => {
         setExpanded(isExpanded ? panel : false);
+    }
+    const handleNotifyVariant = (variant, message) => {
+        enqueueSnackbar(message, { variant })
     }
     useEffect(() => {
         if (family.no_balanceds && family.no_balanceds.length !== 0) setAreLoans(true)
@@ -49,10 +64,19 @@ function TabPanelBoard({ families, family, index, valueTab, getPDFNoBalanceds, o
     }
     const handleGenerateBalance = async () => {
         try {
-            await onGenerateBalance(family._id);
+            handleCloseGenBalance();
+            setOpenBackDrop(true);
+            const resBalance = await onGenerateBalance(family._id);
+            setOpenBackDrop(false);
+            handleNotifyVariant('success',resBalance)
             history.push('/board')
         } catch (error) {
-            console.log(error)
+            if (error.status === 400) {
+                handleNotifyVariant('warning', error.message);
+            }
+            if (error.status === 404) {
+                handleNotifyVariant('error', error.message);
+            }
         }
     }
     const uploadImage = async(idloan, idfamily, data, handleProgress)=>dispatch(postImageLoan(idloan, idfamily, data, handleProgress));
@@ -108,6 +132,12 @@ function TabPanelBoard({ families, family, index, valueTab, getPDFNoBalanceds, o
         setFilesUploaded( filesUploaded.filter( file => file.id !== idimage))
         await deleteImage(idloan, idfamily, idimage);
       };
+    const handleOpenGenBalance = ()=>{
+        setOpenGenBalance(true)
+    }
+    const handleCloseGenBalance = ()=>{
+        setOpenGenBalance(false)
+    }
     return (
         <TabPanel
             value={valueTab}
@@ -143,8 +173,26 @@ function TabPanelBoard({ families, family, index, valueTab, getPDFNoBalanceds, o
                     <Divider />
                     <AccordionActions className={classes.actions}>
                         <Button size='small' color='primary' variant='outlined' onClick={handleGetPDF} target='_blank'>Generar PDF</Button>
-                        <Button size='small' color='secondary' variant='contained' onClick={handleGenerateBalance}>Generar Balance</Button>
+                        {userIsAdmin && <Button size='small' color='secondary' variant='contained' onClick={handleOpenGenBalance}>Generar Balance</Button>}
                     </AccordionActions>
+                    <Dialog fullWidth={xs} maxWidth={xs?'xs':'sm'} open={openGenBalance} onClose={handleCloseGenBalance}>
+                        <DialogTitle>
+                            Generar Balance
+                        </DialogTitle>
+                        <DialogContent>
+                            <DialogContentText>
+                                Al generar balance, los prestamos actuales serán balanceados y ya no se podrán editar. 
+                                Revise que sean correctos y confirme o si ya lo hizo, confirme por favor.
+                            </DialogContentText>
+                        </DialogContent>
+                        <DialogActions>
+                            <Button size='small' color='secondary' variant='contained' onClick={handleGenerateBalance}>Balancear</Button>
+                            <Button size='small' color='default' onClick={handleCloseGenBalance}>Cancelar</Button>
+                        </DialogActions>
+                    </Dialog>
+                    <Backdrop open={openBackDrop} className={classes.backdrop}>
+                        <CircularProgress color='inherit' />
+                    </Backdrop>
                 </>}
             </Accordion>
             {(!addLoan.bool && areMembers) && <Button fullWidth variant='contained' color='primary' style={{ margin: '8px' }} onClick={() => setAddLoan({id : null, bool: true})}>Agregar prestamo</Button>}
