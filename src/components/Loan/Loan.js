@@ -1,16 +1,19 @@
-import { Button, IconButton, MobileStepper, Step, StepContent, StepLabel, Stepper, Typography } from '@material-ui/core'
+import { Button, CircularProgress, IconButton, MobileStepper, Step, StepContent, StepLabel, Stepper, Typography } from '@material-ui/core'
 import React, { useState } from 'react'
 import useStyle from './styles';
 import dateFormat from 'dateformat';
-import { AddPhotoAlternate, Edit as EditIcon, KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
+import { AddPhotoAlternate, Delete, Edit as EditIcon, KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
 import FormLoan from '../FormLoan/FormLoan';
 import Upload from '../Upload/Upload';
 import CListImages from '../../containers/Images/CListImages';
 import { v4 as uuidv4 } from 'uuid'
 import fileSize from 'filesize';
+import { useSnackbar } from 'notistack'
 
-function Balance({ family, _id, subject, creator, quantity, spenders, beneficiaries, own_products, exclude_products, sub_balance, images, date, handleUpdateLoan, handleUploadImage, handleDeleteImage }) {
+
+function Balance({ family, _id, subject, creator, quantity, spenders, beneficiaries, own_products, exclude_products, sub_balance, images, date, handleUpdateLoan, handleUploadImage, handleDeleteImage, handleDeleteLoan }) {
     const classes = useStyle();
+    const { enqueueSnackbar } = useSnackbar();
     const dateLoan = new Date(date);
     dateLoan.setDate(dateLoan.getDate() + 1);
     const [edit, setEdit] = useState(false);
@@ -19,6 +22,7 @@ function Balance({ family, _id, subject, creator, quantity, spenders, beneficiar
     })
     const [activeStepImages, setActiveStepImages] = useState(0);
     const [activeStepEditLoan, setActiveStepEditLoan] = useState(0);
+    const [loadDelete, setLoadDelete] = useState(false);
     const [filesUploaded, setFilesUploaded] = useState(
         images.map(f => ({
             id: f._id,
@@ -41,6 +45,9 @@ function Balance({ family, _id, subject, creator, quantity, spenders, beneficiar
                 url : f.url
             })))
         },[images]) */
+    const handleNotifyVariant = (variant, message) => {
+        enqueueSnackbar(message, { variant })
+    }
     const resetFileUploaded = () => {
         setFilesUploaded(images.map(f => ({
             id: f._id,
@@ -54,28 +61,28 @@ function Balance({ family, _id, subject, creator, quantity, spenders, beneficiar
     }
     const handleEdit = () => {
         if (edit) {
-            if(activeStepEditLoan === 0){
+            if (activeStepEditLoan === 0) {
                 setEdit(false);
-            }else{
+            } else {
                 setActiveStepEditLoan(0);
             }
             resetFileUploaded();
             setDataLoan({ date: dateFormat(dateLoan, "yyyy-mm-dd"), subject, quantity, spenders, beneficiaries, own_products, exclude_products })
-        }else{
+        } else {
             setEdit(true);
             setActiveStepEditLoan(0)
         }
     }
     const handleAddImages = () => {
         if (edit) {
-            if(activeStepEditLoan === 1){
+            if (activeStepEditLoan === 1) {
                 setEdit(false)
-            }else{
+            } else {
                 setActiveStepEditLoan(1)
             }
             resetFileUploaded();
             setDataLoan({ date: dateFormat(dateLoan, "yyyy-mm-dd"), subject, quantity, spenders, beneficiaries, own_products, exclude_products })
-        } else{
+        } else {
             setEdit(true)
             setActiveStepEditLoan(1);
         }
@@ -162,18 +169,33 @@ function Balance({ family, _id, subject, creator, quantity, spenders, beneficiar
         setFilesUploaded(filesUploaded.filter(file => file.id !== idimage))
         await handleDeleteImage(idloan, idfamily, idimage);
     };
+    const onDeleteLoan = async () => {
+        try {
+            setLoadDelete(true);
+            const resDeleteLoan = await handleDeleteLoan(_id, family._id);
+            handleNotifyVariant('success', resDeleteLoan)
+            setLoadDelete(false);
+        } catch (error) {
+            console.log(error)
+        }
+    }
     return (
         <div>
             <div className={classes.title}>
                 <Typography variant='body2' style={{ fontStyle: 'italic', marginTop: '4px' }} align='center' color='textSecondary'>Creado por {creator}</Typography>
-                <div className={classes.buttonsEdit}>
-                <IconButton onClick={handleEdit}>
-                    <EditIcon />
-                </IconButton>
-                <IconButton onClick={handleAddImages}>
-                    <AddPhotoAlternate />
-                </IconButton>
-                </div>
+                {!loadDelete ?
+                    <div className={classes.buttonsEdit}>
+                        <IconButton onClick={handleEdit}>
+                            <EditIcon />
+                        </IconButton>
+                        <IconButton onClick={handleAddImages}>
+                            <AddPhotoAlternate />
+                        </IconButton>
+                        <IconButton onClick={onDeleteLoan}>
+                            <Delete style={{ fill: '#f44336' }} />
+                        </IconButton>
+                    </div> :
+                    <CircularProgress style={{ color: '#f44336', width: '24px', height: '24px' }} />}
             </div>
             {!edit &&
                 <div className={classes.loanContainer}>
@@ -191,7 +213,7 @@ function Balance({ family, _id, subject, creator, quantity, spenders, beneficiar
                     </div>
                     {!!images.length && <div className={classes.containerImages}>
                         <div className={classes.containerImage}>
-                            <a href={images[activeStepImages].url} target="_blank" rel="noreferrer" style={{width:'100%'}}>
+                            <a href={images[activeStepImages].url} target="_blank" rel="noreferrer" style={{ width: '100%' }}>
                                 <img src={images[activeStepImages].url} alt={images[activeStepImages].name} className={classes.image} />
                             </a>
                         </div>

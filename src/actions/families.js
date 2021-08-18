@@ -1,4 +1,4 @@
-import { AUTH, GET_MEMBERS_BY_FAMILY, EDIT_MEMBERS, EDIT_ADMINS, EDIT_CREATOR, GET_BALANCES_BY_FAMILY, GET_NO_BALANCEDS_BY_FAMILY, GENERATE_BALANCE_BY_FAMILY, EDIT_LOAN, ADD_LOAN, POST_IMAGE, DELETE_IMAGE, ADD_FAMILY, REMOVE_FAMILY} from '../constants/actionsTypes'
+import { AUTH, GET_MEMBERS_BY_FAMILY, EDIT_MEMBERS, EDIT_ADMINS, EDIT_CREATOR, GET_BALANCES_BY_FAMILY, GET_NO_BALANCEDS_BY_FAMILY, GENERATE_BALANCE_BY_FAMILY, EDIT_LOAN, ADD_LOAN, POST_IMAGE, DELETE_IMAGE, ADD_FAMILY, REMOVE_FAMILY, DELETE_LOAN} from '../constants/actionsTypes'
 import * as API from '../api'
 export const getMembersFamily = (cancel, idfamily)=>async(dispatch)=>{
     try {
@@ -106,6 +106,22 @@ export const deleteImageLoan = (idloan, idfamily, idimage) => async(dispatch)=>{
         delete data.message;
         dispatch({
             type : DELETE_IMAGE,
+            payload : data
+        })
+        return message;
+    } catch (error) {
+        let err = new Error(error.response.data);
+        err.status = error.response.status;
+        throw err;
+    }
+}
+export const deleteLoan = (idloan, idfamily ) => async(dispatch)=>{
+    try {
+        const { data } = await API.deleteLoan(idloan, idfamily);
+        const message = data.message;
+        delete data.message;
+        dispatch({
+            type : DELETE_LOAN,
             payload : data
         })
         return message;
