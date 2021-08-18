@@ -54,13 +54,19 @@ function TabPanelBoard({ families, family, index, valueTab, getPDFNoBalanceds, o
     const idFamily = family._id;
     const classes = useStyles();
     const handleGetPDF = async () => {
-        const res = await getPDFNoBalanceds(family._id)
-        const file = new Blob(
-            [res.data],
-            { type: 'application/pdf' }
-        );
-        const fileURL = URL.createObjectURL(file);
-        window.open(fileURL)
+        try {
+            setOpenBackDrop(true);
+            const res = await getPDFNoBalanceds(family._id);
+            setOpenBackDrop(false);
+            const file = new Blob(
+                [res.data],
+                { type: 'application/pdf' }
+            );
+            const fileURL = URL.createObjectURL(file);
+            window.open(fileURL)
+        } catch (error) {
+            console.log(error)
+        }
     }
     const handleGenerateBalance = async () => {
         try {
