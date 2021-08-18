@@ -37,7 +37,6 @@ function ListLoans({ handleGetNoBalancedsFamily, handleUpdateLoan, handleUploadI
                     <AccordionDetails style={{display:'block'}}>
                         <Loan key={index} {...loan} family={family} handleUpdateLoan={handleUpdateLoan} handleUploadImage={handleUploadImage} handleDeleteImage={handleDeleteImage} />
                     </AccordionDetails>
-
                 </Accordion>}
             )}
         </div>

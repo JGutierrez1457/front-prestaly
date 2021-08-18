@@ -5,7 +5,7 @@ import { getNoBalancedsFamily, postImageLoan, updateLoan, deleteImageLoan } from
 const mapStateToProps = (state, ownProps)=>{
     return {
         idFamily : ownProps.idFamily,
-        family : state.families.find(family => family._id === ownProps.idFamily),
+        family : ownProps.family,
     }
 }
 const mapDispatchToProps = (dispatch)=>{
