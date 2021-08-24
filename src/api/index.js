@@ -19,6 +19,7 @@ export const postImage = (idloan, idfamily, data, handleProgress)=> API.post(`ap
 
 export const deleteImage = (idloan, idfamily, idimage)=> API.delete(`api/loans/${idloan}/families/${idfamily}/image/${idimage}`);
 export const deleteFamily = (idfamily, password)=> API.delete(`api/families/${idfamily}`, { data : {password} });
+export const deleteLoan = (idloan, idfamily)=> API.delete(`api/loans/${idloan}/families/${idfamily}`);
 
 export const addMember = (idfamily,username)=>API.patch(`/api/families/${idfamily}/members/${username}/add`)
 export const removeMember = (idfamily,username)=>API.patch(`/api/families/${idfamily}/members/${username}/delete`)

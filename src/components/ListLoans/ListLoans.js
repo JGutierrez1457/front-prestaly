@@ -6,7 +6,7 @@ import useStyle from './styles'
 import { useState } from 'react';
 import dateFormat from 'dateformat';
 
-function ListLoans({ handleGetNoBalancedsFamily, handleUpdateLoan, handleUploadImage, handleDeleteImage, idFamily, family }) {
+function ListLoans({ handleGetNoBalancedsFamily, handleUpdateLoan, handleUploadImage, handleDeleteImage, handleDeleteLoan, idFamily, family }) {
     const classes = useStyle();
     const [ expandedLoan , setExpandedLoan ]= useState(false);
     const handleExpanded = (loan)=>(e, newExpanded)=>{
@@ -35,9 +35,8 @@ function ListLoans({ handleGetNoBalancedsFamily, handleUpdateLoan, handleUploadI
                         <b>{dateFormat(dateLoan, "dd/mm/yyyy")}</b>&nbsp;<span style={{marginLeft : '16px'}}>{loan.subject}</span>
                     </AccordionSummary>
                     <AccordionDetails style={{display:'block'}}>
-                        <Loan key={index} {...loan} family={family} handleUpdateLoan={handleUpdateLoan} handleUploadImage={handleUploadImage} handleDeleteImage={handleDeleteImage} />
+                        <Loan key={index} {...loan} family={family} handleUpdateLoan={handleUpdateLoan} handleUploadImage={handleUploadImage} handleDeleteImage={handleDeleteImage} handleDeleteLoan={handleDeleteLoan} />
                     </AccordionDetails>
-
                 </Accordion>}
             )}
         </div>

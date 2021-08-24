@@ -30,6 +30,17 @@ export default makeStyles((theme)=>({
     stepperContent : {
         padding : theme.spacing(1,0 )
     },
+    containerPreBalance:{
+        display : 'flex',
+        flexDirection : 'column',
+        alignItems : 'center',
+        ' & div':{
+            display : 'flex',
+            flexWrap : 'wrap',
+            justifyContent : 'center'
+        }
+
+    },
     backdrop:{
         zIndex: theme.zIndex.drawer + 1,
         color: '#fff',
