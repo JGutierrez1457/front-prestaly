@@ -1,4 +1,5 @@
-import { Button, CircularProgress, IconButton, MobileStepper, Step, StepContent, StepLabel, Stepper, Typography } from '@material-ui/core'
+import { Button, CircularProgress, Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText, IconButton, MobileStepper, 
+        Step, StepContent, StepLabel, Stepper, Typography } from '@material-ui/core'
 import React, { useState } from 'react'
 import useStyle from './styles';
 import dateFormat from 'dateformat';
@@ -22,6 +23,7 @@ function Balance({ family, _id, subject, creator, quantity, spenders, beneficiar
     })
     const [activeStepImages, setActiveStepImages] = useState(0);
     const [activeStepEditLoan, setActiveStepEditLoan] = useState(0);
+    const [dialogDelete, setDialogDelete] = useState(false);
     const [loadDelete, setLoadDelete] = useState(false);
     const [filesUploaded, setFilesUploaded] = useState(
         images.map(f => ({
@@ -171,6 +173,7 @@ function Balance({ family, _id, subject, creator, quantity, spenders, beneficiar
     };
     const onDeleteLoan = async () => {
         try {
+            setDialogDelete(false)
             setLoadDelete(true);
             const resDeleteLoan = await handleDeleteLoan(_id, family._id);
             handleNotifyVariant('success', resDeleteLoan)
@@ -191,12 +194,28 @@ function Balance({ family, _id, subject, creator, quantity, spenders, beneficiar
                         <IconButton onClick={handleAddImages}>
                             <AddPhotoAlternate />
                         </IconButton>
-                        <IconButton onClick={onDeleteLoan}>
+                        <IconButton onClick={()=>setDialogDelete(true)}>
                             <Delete style={{ fill: '#f44336' }} />
                         </IconButton>
                     </div> :
                     <CircularProgress style={{ color: '#f44336', width: '24px', height: '24px' }} />}
             </div>
+            <Dialog
+                open={dialogDelete}
+                onClose={()=>setDialogDelete(false)}
+            >
+                <DialogTitle>Desea borrar el prestamo?</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        Una vez borrado, no se podrá recuperar los datos ingresados.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={onDeleteLoan} variant='contained' color='secondary'>Borrar</Button>
+                    <Button onClick={()=>setDialogDelete(false)} variant='contained'>Cancelar</Button>
+                </DialogActions>
+
+            </Dialog>
             {!edit &&
                 <div className={classes.loanContainer}>
                     <div style={{ width: 'auto' }}>
