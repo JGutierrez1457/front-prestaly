@@ -51,6 +51,7 @@ function TabPanelBoard({ families, family, index, valueTab, getPDFNoBalanceds, o
         if (family.members && family.members.length !== 0) setAreMembers(true)
         if (family.members && family.members.length === 0) setAreMembers(false)
         if (family.members && family.no_balanceds && family.no_balanceds.length !== 0) setPreBalance(getPreBalance(family.no_balanceds, family.members));
+        if (family.members && family.no_balanceds && family.no_balanceds.length === 0) setPreBalance(null);
     }, [family]);
     const idFamily = family._id;
     const classes = useStyles();
